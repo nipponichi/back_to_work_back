@@ -46,4 +46,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'user_id', 'id');
+    }
+    
+    public function taskOffers()
+    {
+        return $this->hasMany(TaskOffer::class, 'user_id', 'id');
+    }
+
+    public function taskPictures()
+    {
+        return $this->hasMany(TaskPicture::class, 'user_id', 'id');
+    }
+
+    public function taskChats()
+    {
+        return $this->hasMany(TaskChat::class, 'user_id', 'id');
+    }
+
+    public function userStats()
+    {
+        return $this->hasOne(UserStats::class, 'user_id', 'id');
+    }
 }

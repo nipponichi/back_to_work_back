@@ -8,12 +8,9 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\LoginController;
 
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/signup', [LoginController::class, 'signup']);
 
-
-Route::post('/login2', [PassportLoginController::class, 'login']);
-Route::post('/signup2', [PassportLoginController::class, 'signup']);
+Route::post('/login', [PassportLoginController::class, 'login']);
+Route::post('/signup', [PassportLoginController::class, 'signup']);
 
 Route::middleware(['auth.validation2'])->group(function () {
     Route::post('/userData2', [PassportLoginController::class, 'userProfile']);
