@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class Ad extends Model
 {
     use HasFactory;
 
-    protected $table = 'tasks';
+    protected $table = 'ads';
     protected $fillable = [
         'name', 
         'description',
@@ -19,24 +19,24 @@ class Task extends Model
         'user_id' 
     ];
 
-    public function task()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function taskPictures()
+    public function adPicture()
     {
-        return $this->hasMany(TaskPicture::class, 'task_id', 'id');
+        return $this->hasMany(AdPicture::class, 'ad_id', 'id');
     }
 
-    public function taskOffers()
+    public function adOffer()
     {
-        return $this->hasMany(TaskOffer::class, 'task_id', 'id');
+        return $this->hasMany(AdOffer::class, 'ad_id', 'id');
     }
 
-    public function taskChats()
+    public function adChat()
     {
-        return $this->hasMany(TaskChat::class, 'task_id', 'id');
+        return $this->hasMany(AdChat::class, 'ad_id', 'id');
     }
 
 }

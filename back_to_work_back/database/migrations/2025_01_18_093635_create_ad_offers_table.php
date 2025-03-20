@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_offers', function (Blueprint $table) {
+        Schema::create('ad_offers', function (Blueprint $table) {
             $table->id();
             $table->float('bid');
             $table->string('description')->nullable();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_offers');
+        Schema::dropIfExists('ad_offers');
     }
 };

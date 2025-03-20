@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class TaskChat extends Model
+class adChat extends Model
 {
     use HasFactory;
 
-    protected $table = 'task_chats';
+    protected $table = 'ad_chats';
 
     protected $fillable = [
         'message', 
         'is_read',
-        'task_id',
+        'ad_id',
         'sender_id',
         'receiver_id'
     ];
 
-    public function task()
+    public function ad()
     {
-        return $this->belongsTo(Task::class, 'task_id', 'id');
+        return $this->belongsTo(Ad::class, 'ad_id', 'id');
     }
 
     public function sender()

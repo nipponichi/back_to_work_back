@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TaskOffer extends Model
+class AdOffer extends Model
 {
     use HasFactory;
 
-    protected $table = 'task_offers';
+    protected $table = 'ad_offers';
 
     protected $fillable = [
         'bid', 
         'description',
         'is_valid',
-        'task_id',
+        'ad_id',
         'user_id' 
     ];
 
-    public function task()
+    public function ad()
     {
-        return $this->belongsTo(Task::class, 'task_id', 'id');
+        return $this->belongsTo(Ad::class, 'ad_id', 'id');
     }
     public function user()
     {

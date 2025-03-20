@@ -47,28 +47,28 @@ class User extends Authenticatable
         ];
     }
 
-    public function tasks()
+    public function ad()
     {
-        return $this->hasMany(Task::class, 'user_id', 'id');
+        return $this->hasMany(Ad::class, 'ad_id', 'id');
     }
     
-    public function taskOffers()
+    public function adOffer()
     {
-        return $this->hasMany(TaskOffer::class, 'user_id', 'id');
+        return $this->hasMany(AdOffer::class, 'user_id', 'id');
     }
 
-    public function taskPictures()
+    public function adPicture()
     {
-        return $this->hasMany(TaskPicture::class, 'user_id', 'id');
+        return $this->hasMany(AdPicture::class, 'user_id', 'id');
     }
 
-    public function taskChats()
+    public function adChat()
     {
-        return $this->hasMany(TaskChat::class, 'user_id', 'id');
+        return $this->hasMany(AdChat::class, 'user_id', 'id');
     }
 
-    public function userStats()
+    public function userStat()
     {
-        return $this->hasOne(UserStats::class, 'user_id', 'id');
+        return $this->hasOne(UserStat::class, 'user_id', 'id');
     }
 }

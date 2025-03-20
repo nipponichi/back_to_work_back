@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_chats', function (Blueprint $table) {
+        Schema::create('task_pictures', function (Blueprint $table) {
             $table->id();
-            $table->string('message');
-            $table->boolean('is_read')->default(false);
+            $table->blob('media');
             $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
-            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_chats');
+        Schema::dropIfExists('task_pictures');
     }
 };

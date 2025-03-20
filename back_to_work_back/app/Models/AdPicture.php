@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TaskPicture extends Model
+class AdPicture extends Model
 {
     use HasFactory;
 
-    protected $table = 'task_pictures';
+    protected $table = 'ad_pictures';
 
     protected $fillable = [
         'picture', 
-        'task_id' 
+        'ad_id' 
     ];
 
-    public function task()
+    public function ad()
     {
-        return $this->belongsTo(Task::class, 'task_id', 'id');
+        return $this->belongsTo(Ad::class, 'ad_id', 'id');
     }
 }
