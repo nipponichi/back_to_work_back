@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('user_stats', function (Blueprint $table) {
             $table->id();
-            $table->float('quality_price')->unsigned();
-            $table->float('customer_care')->unsigned();
-            $table->float('timing')->unsigned();
+            $table->integer('quality_price')->unsigned();
+            $table->integer('customer_care')->unsigned();
+            $table->integer('timing')->unsigned();
             $table->string('review')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
