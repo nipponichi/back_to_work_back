@@ -19,7 +19,7 @@ class addChat extends Model
         'receiver_id'
     ];
 
-    public function ad()
+    public function addChat()
     {
         return $this->belongsTo(Add::class, 'ad_id', 'id');
     }
