@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('path'); // Almacena la ruta del archivo
             $table->string('type'); // "image" o "video"
-            $table->foreignId('add_id')->constrained('ads')->onDelete('cascade');
+            $table->foreignId('add_id')->constrained('adds')->onDelete('cascade');
             $table->timestamps();
         });
     }
