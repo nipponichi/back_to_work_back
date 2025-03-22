@@ -16,7 +16,7 @@ return new class extends Migration
             $table->float('bid');
             $table->string('description')->nullable();
             $table->boolean('is_valid')->default(true);
-            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
+            $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
