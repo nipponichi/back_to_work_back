@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ads_pictures', function (Blueprint $table) {
+        Schema::create('adds_offers', function (Blueprint $table) {
             $table->id();
-            $table->binary('media');
-            $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');
+            $table->float('bid');
+            $table->string('description')->nullable();
+            $table->boolean('is_valid')->default(true);
+            $table->foreignId('add_id')->constrained('adds')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ads_pictures');
+        Schema::dropIfExists('adds_offers');
     }
 };

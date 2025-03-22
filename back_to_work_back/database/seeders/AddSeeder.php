@@ -15,7 +15,7 @@ class AddSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('ads')->insert([
+        DB::table('adds')->insert([
             [
                 'name' => 'Venta de Cómics Antiguos',
                 'description' => 'Colección de cómics clásicos en excelente estado.',

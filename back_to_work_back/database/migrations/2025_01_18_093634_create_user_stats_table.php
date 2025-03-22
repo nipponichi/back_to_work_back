@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('timing')->unsigned();
             $table->string('review')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');
+            $table->foreignId('add_id')->constrained('adds')->onDelete('cascade');
             $table->timestamps();
         });
     }

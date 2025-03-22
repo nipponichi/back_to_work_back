@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ad_offers', function (Blueprint $table) {
+        Schema::create('adds_pictures', function (Blueprint $table) {
             $table->id();
-            $table->float('bid');
-            $table->string('description')->nullable();
-            $table->boolean('is_valid')->default(true);
-            $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('path'); // Almacena la ruta del archivo
+            $table->string('type'); // "image" o "video"
+            $table->foreignId('add_id')->constrained('ads')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ad_offers');
+        Schema::dropIfExists('adds_pictures');
     }
 };

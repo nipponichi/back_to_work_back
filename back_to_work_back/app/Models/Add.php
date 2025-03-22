@@ -24,19 +24,26 @@ class Add extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    /*
     public function adPicture()
     {
-        return $this->hasMany(AdPicture::class, 'ad_id', 'id');
+        return $this->hasMany(AddPicture::class, 'ad_id', 'id');
+    }
+    */
+
+    public function pictures()
+{
+    return $this->hasMany(AddPicture::class, 'add_id');
+}
+
+    public function addOffer()
+    {
+        return $this->hasMany(AddOffer::class, 'add_id', 'id');
     }
 
-    public function adOffer()
+    public function addChat()
     {
-        return $this->hasMany(AdOffer::class, 'ad_id', 'id');
-    }
-
-    public function adChat()
-    {
-        return $this->hasMany(AdChat::class, 'ad_id', 'id');
+        return $this->hasMany(AddChat::class, 'add_id', 'id');
     }
 
 }

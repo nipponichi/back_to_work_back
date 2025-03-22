@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class adChat extends Model
+class addChat extends Model
 {
     use HasFactory;
 
-    protected $table = 'ad_chats';
+    protected $table = 'add_chats';
 
     protected $fillable = [
         'message', 
@@ -21,7 +21,7 @@ class adChat extends Model
 
     public function ad()
     {
-        return $this->belongsTo(Ad::class, 'ad_id', 'id');
+        return $this->belongsTo(Add::class, 'ad_id', 'id');
     }
 
     public function sender()
