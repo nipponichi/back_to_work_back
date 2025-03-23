@@ -9,19 +9,19 @@ class addChat extends Model
 {
     use HasFactory;
 
-    protected $table = 'add_chats';
+    protected $table = 'adds_chats';
 
     protected $fillable = [
         'message', 
         'is_read',
-        'ad_id',
+        'add_id',
         'sender_id',
         'receiver_id'
     ];
 
     public function addChat()
     {
-        return $this->belongsTo(Add::class, 'ad_id', 'id');
+        return $this->belongsTo(Add::class, 'add_id', 'id');
     }
 
     public function sender()

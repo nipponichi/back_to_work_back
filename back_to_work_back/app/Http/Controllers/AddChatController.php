@@ -33,7 +33,7 @@ class AddChatController extends Controller
             $validatedData = $request->validate([
                 'message' => 'required|string|max:1000',
                 'is_read' => 'required|boolean',
-                'ad_id' => 'required|integer|exists:adds,id',
+                'add_id' => 'required|integer|exists:adds,id',
                 'sender_id' => 'required|integer|exists:users,id',
                 'receiver_id' => 'required|integer|exists:users,id',
             ]);
