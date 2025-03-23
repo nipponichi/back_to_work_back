@@ -12,7 +12,7 @@ class addCategory extends Model
     protected $table = 'adds_categories';
 
     protected $fillable = [
-        'name', 
+        'category', 
         'description'
     ];
 }

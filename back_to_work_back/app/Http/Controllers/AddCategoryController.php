@@ -30,7 +30,7 @@ class AddCategoryController extends Controller
         DB::beginTransaction();
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:adds_categories,name',
+                'category' => 'required|string|max:255|unique:adds_categories,category',
                 'description' => 'nullable|string|max:500',
             ]);
 
@@ -67,7 +67,7 @@ class AddCategoryController extends Controller
             $category = AddCategory::findOrFail($id);
 
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:adds_categories,name,' . $id,
+                'category' => 'required|string|max:255|unique:adds_categories,category,' . $id,
                 'description' => 'nullable|string|max:500',
             ]);
 
