@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Storage;
 class AddController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar todos los anuncios con imágenes/videos.
      */
     public function index()
     {
         try {
-            $adds = Add::with('pictures')->get();
+            $adds = Add::with(['pictures:id,add_id,path,type'])->get();
             return response()->json(['success' => true, 'message' => 'Adds loaded correctly', 'data' => $adds], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading adds: ' . $e->getMessage()], 500);
@@ -25,7 +25,7 @@ class AddController extends Controller
     }
 
     /**
-     * Store a newly created Add with media files.
+     * Crear un nuevo anuncio con imágenes/videos.
      */
     public function store(Request $request)
     {
@@ -39,7 +39,7 @@ class AddController extends Controller
                 'location' => 'required|string|max:64',
                 'is_done' => 'required|boolean',
                 'user_id' => 'required|integer|exists:users,id',
-                'media.*' => 'file|mimes:jpg,jpeg,png,mp4,mov|max:20480' // Máx. 20MB por archivo
+                'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,video/mp4,video/quicktime'
             ]);
 
             // Crear el anuncio
@@ -47,16 +47,20 @@ class AddController extends Controller
 
             // Guardar archivos multimedia si existen
             if ($request->hasFile('media')) {
+                $mediaFiles = [];
                 foreach ($request->file('media') as $file) {
-                    $path = $file->store('adds_media', 'public'); // Guarda en storage/app/public/adds_media
+                    $path = $file->store('adds_media', 'public');
                     $type = str_contains($file->getMimeType(), 'image') ? 'image' : 'video';
 
-                    AddPicture::create([
+                    $mediaFiles[] = [
                         'path' => $path,
                         'type' => $type,
                         'add_id' => $add->id,
-                    ]);
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
+                AddPicture::insert($mediaFiles);
             }
 
             DB::commit();
@@ -68,7 +72,7 @@ class AddController extends Controller
     }
 
     /**
-     * Display the specified resource with media.
+     * Mostrar un anuncio específico con imágenes/videos.
      */
     public function show($id)
     {
@@ -81,7 +85,7 @@ class AddController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualizar un anuncio y añadir nuevas imágenes/videos sin borrar las existentes.
      */
     public function update(Request $request, $id)
     {
@@ -96,31 +100,28 @@ class AddController extends Controller
                 'location' => 'required|string|max:64',
                 'is_done' => 'required|boolean',
                 'user_id' => 'required|integer|exists:users,id',
-                'media.*' => 'file|mimes:jpg,jpeg,png,mp4,mov|max:20480' // Permitir nuevas imágenes/videos opcionales
+                'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,video/mp4,video/quicktime'
             ]);
 
-            // Actualizar los datos principales del Add
+            // Actualizar los datos del anuncio sin tocar las imágenes/videos
             $add->update($validatedData);
 
-            // Si hay nuevos archivos, eliminamos los anteriores y agregamos los nuevos
+            // Si hay nuevos archivos, los agregamos sin eliminar los existentes
             if ($request->hasFile('media')) {
-                // Eliminar archivos físicos antiguos
-                foreach ($add->pictures as $picture) {
-                    Storage::disk('public')->delete($picture->path);
-                    $picture->delete();
-                }
-
-                // Subir nuevos archivos
+                $mediaFiles = [];
                 foreach ($request->file('media') as $file) {
                     $path = $file->store('adds_media', 'public');
                     $type = str_contains($file->getMimeType(), 'image') ? 'image' : 'video';
 
-                    AddPicture::create([
+                    $mediaFiles[] = [
                         'path' => $path,
                         'type' => $type,
                         'add_id' => $add->id,
-                    ]);
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
+                AddPicture::insert($mediaFiles);
             }
 
             DB::commit();
@@ -132,7 +133,7 @@ class AddController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Eliminar un anuncio y sus imágenes/videos asociados.
      */
     public function destroy($id)
     {
@@ -140,13 +141,13 @@ class AddController extends Controller
         try {
             $add = Add::findOrFail($id);
 
-            // Eliminar archivos físicos de las imágenes/videos antes de eliminar el add
+            // Eliminar archivos físicos antes de borrar los registros
             foreach ($add->pictures as $picture) {
                 Storage::disk('public')->delete($picture->path);
                 $picture->delete();
             }
 
-            // Eliminar el add
+            // Eliminar el anuncio
             $add->delete();
 
             DB::commit();
@@ -158,7 +159,7 @@ class AddController extends Controller
     }
 
     /**
-     * Get a single add with its relationships.
+     * Obtener un anuncio con todas sus relaciones.
      */
     public function getAdd($id)
     {

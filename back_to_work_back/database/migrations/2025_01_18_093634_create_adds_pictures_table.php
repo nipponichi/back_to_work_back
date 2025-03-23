@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('adds_pictures', function (Blueprint $table) {
             $table->id();
-            $table->string('path'); // Almacena la ruta del archivo
-            $table->string('type'); // "image" o "video"
-            $table->foreignId('add_id')->constrained('adds')->onDelete('cascade');
+            $table->text('path'); // Permite rutas más largas
+            $table->enum('type', ['image', 'video']); // Restringe valores
+            $table->foreignId('add_id')
+                  ->constrained('adds')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->timestamps();
         });
     }
