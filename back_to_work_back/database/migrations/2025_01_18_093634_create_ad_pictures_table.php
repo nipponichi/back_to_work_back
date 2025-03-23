@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_pictures', function (Blueprint $table) {
+        Schema::create('ad_pictures', function (Blueprint $table) {
             $table->id();
             $table->blob('media');
             $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_pictures');
+        Schema::dropIfExists('ad_pictures');
     }
 };
