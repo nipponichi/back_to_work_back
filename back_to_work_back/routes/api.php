@@ -10,6 +10,15 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AddOfferController;
 use App\Http\Controllers\AddController;
 use App\Http\Controllers\AddChatController;
+use App\Http\Controllers\AddCategoryController;
+
+Route::prefix('categories')->group(function () {
+    Route::get('/', [AddCategoryController::class, 'index']); // Obtener todas las categorías
+    Route::post('/', [AddCategoryController::class, 'store']); // Crear nueva categoría
+    Route::get('{id}', [AddCategoryController::class, 'show']); // Obtener categoría por ID
+    Route::put('{id}', [AddCategoryController::class, 'update']); // Actualizar categoría
+    Route::delete('{id}', [AddCategoryController::class, 'destroy']); // Eliminar categoría
+});
 
 Route::apiResource('offers', AddOfferController::class);
 Route::apiResource('adds', AddController::class);

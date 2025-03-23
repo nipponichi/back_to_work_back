@@ -13,12 +13,17 @@ class Add extends Model
     protected $fillable = [
         'name', 
         'description',
+        'category_id',
         'due_date',
         'location',
         'is_done',
         'user_id' 
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(addCategory::class, 'category_id', 'id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

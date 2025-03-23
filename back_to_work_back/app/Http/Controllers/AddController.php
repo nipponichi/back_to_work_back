@@ -35,6 +35,7 @@ class AddController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:32',
                 'description' => 'nullable|string|max:255',
+                'category_id' => 'required|integer|exists:adds_categories,id',
                 'due_date' => 'nullable|date|after_or_equal:today',
                 'location' => 'required|string|max:64',
                 'is_done' => 'required|boolean',
@@ -96,6 +97,7 @@ class AddController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:32',
                 'description' => 'nullable|string|max:255',
+                'category_id' => 'required|integer|exists:adds_categories,id',
                 'due_date' => 'nullable|date|after_or_equal:today',
                 'location' => 'required|string|max:64',
                 'is_done' => 'required|boolean',
