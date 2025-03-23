@@ -7,6 +7,15 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AddOfferController;
+use App\Http\Controllers\AddController;
+use App\Http\Controllers\AddChatController;
+
+Route::apiResource('offers', AddOfferController::class);
+Route::apiResource('adds', AddController::class);
+Route::get('chats', [AddChatController::class, 'index']); // Listar todos los chats
+Route::post('chats', [AddChatController::class, 'store']); // Enviar un mensaje
+Route::get('chats/ad/{ad_id}', [AddChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/signup', [LoginController::class, 'signup']);

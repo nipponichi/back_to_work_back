@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_stats', function (Blueprint $table) {
+        Schema::create('adds', function (Blueprint $table) {
             $table->id();
-            $table->integer('quality_price')->unsigned();
-            $table->integer('customer_care')->unsigned();
-            $table->integer('timing')->unsigned();
-            $table->string('review')->nullable();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->date('due_date')->nullable();
+            $table->string('location')->nullable();
+            $table->boolean('is_done')->default(false);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('add_id')->constrained('adds')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_stats');
+        Schema::dropIfExists('adds');
     }
 };
