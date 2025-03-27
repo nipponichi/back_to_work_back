@@ -49,22 +49,22 @@ class User extends Authenticatable
 
     public function ad()
     {
-        return $this->hasMany(Add::class, 'ad_id', 'id');
+        return $this->hasMany(Ad::class, 'ad_id', 'id');
     }
     
     public function adOffer()
     {
-        return $this->hasMany(AddOffer::class, 'user_id', 'id');
+        return $this->hasMany(AdOffer::class, 'user_id', 'id');
     }
 
     public function adPicture()
     {
-        return $this->hasMany(AddPicture::class, 'user_id', 'id');
+        return $this->hasMany(AdPicture::class, 'user_id', 'id');
     }
 
     public function adChat()
     {
-        return $this->hasMany(AddChat::class, 'user_id', 'id');
+        return $this->hasMany(AdChat::class, 'user_id', 'id');
     }
 
     public function userStat()

@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AddOffer extends Model
+class AdOffer extends Model
 {
     use HasFactory;
 
-    protected $table = 'adds_offers';
+    protected $table = 'ads_offers';
 
     protected $fillable = [
         'bid', 
@@ -21,7 +21,7 @@ class AddOffer extends Model
 
     public function ad()
     {
-        return $this->belongsTo(Add::class, 'add_id', 'id');
+        return $this->belongsTo(Ad::class, 'add_id', 'id');
     }
     public function user()
     {

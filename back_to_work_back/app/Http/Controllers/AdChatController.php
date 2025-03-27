@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\AddChat;
+use App\Models\AdChat;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class AddChatController extends Controller
+class AdChatController extends Controller
 {
     /**
      * Obtener todos los mensajes.
@@ -15,7 +15,7 @@ class AddChatController extends Controller
     public function index()
     {
         try {
-            $chats = AddChat::with(['addChat', 'sender', 'receiver'])->get();
+            $chats = AdChat::with(['adChat', 'sender', 'receiver'])->get();
             return response()->json(['success' => true, 'message' => 'Chats loaded correctly', 'data' => $chats], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading chats: ' . $e->getMessage()], 500);
@@ -33,13 +33,13 @@ class AddChatController extends Controller
             $validatedData = $request->validate([
                 'message' => 'required|string|max:1000',
                 'is_read' => 'required|boolean',
-                'add_id' => 'required|integer|exists:adds,id',
+                'ad_id' => 'required|integer|exists:ads,id',
                 'sender_id' => 'required|integer|exists:users,id',
                 'receiver_id' => 'required|integer|exists:users,id',
             ]);
 
             // Crear el mensaje en el chat
-            $chat = AddChat::create($validatedData);
+            $chat = AdChat::create($validatedData);
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Message sent successfully', 'data' => $chat], 201);
@@ -50,12 +50,12 @@ class AddChatController extends Controller
     }
 
     /**
-     * Obtener mensajes por anuncio (add_id).
+     * Obtener mensajes por anuncio (ad_id).
      */
-    public function getMessagesByAd($add_id)
+    public function getMessagesByAd($ad_id)
     {
         try {
-            $messages = AddChat::where('add_id', $add_id)
+            $messages = AdChat::where('ad_id', $ad_id)
                 ->with(['sender', 'receiver'])
                 ->orderBy('created_at', 'asc')
                 ->get();

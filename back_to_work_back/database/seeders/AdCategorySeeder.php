@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class AddCategorySeeder extends Seeder
+class AdCategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('adds_categories')->insert([
+        DB::table('ads_categories')->insert([
             [
                 'category' => 'Cuidados Hogar',
                 'description' => 'Servicios de hogar',

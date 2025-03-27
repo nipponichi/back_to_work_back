@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\AddCategory;
+use App\Models\AdCategory;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class AddCategoryController extends Controller
+class AdCategoryController extends Controller
 {
     /**
      * Obtener todas las categorías.
@@ -15,7 +15,7 @@ class AddCategoryController extends Controller
     public function index()
     {
         try {
-            $categories = AddCategory::all();
+            $categories = AdCategory::all();
             return response()->json(['success' => true, 'message' => 'Categories loaded successfully', 'data' => $categories], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading categories: ' . $e->getMessage()], 500);
@@ -34,7 +34,7 @@ class AddCategoryController extends Controller
                 'description' => 'nullable|string|max:500',
             ]);
 
-            $category = AddCategory::create($validatedData);
+            $category = AdCategory::create($validatedData);
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Category created successfully', 'data' => $category], 201);
@@ -50,7 +50,7 @@ class AddCategoryController extends Controller
     public function show($id)
     {
         try {
-            $category = AddCategory::findOrFail($id);
+            $category = AdCategory::findOrFail($id);
             return response()->json(['success' => true, 'message' => 'Category loaded successfully', 'data' => $category], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Category not found'], 404);
@@ -64,10 +64,10 @@ class AddCategoryController extends Controller
     {
         DB::beginTransaction();
         try {
-            $category = AddCategory::findOrFail($id);
+            $category = AdCategory::findOrFail($id);
 
             $validatedData = $request->validate([
-                'category' => 'required|string|max:255|unique:adds_categories,category,' . $id,
+                'category' => 'required|string|max:255|unique:ads_categories,category,' . $id,
                 'description' => 'nullable|string|max:500',
             ]);
 
@@ -88,7 +88,7 @@ class AddCategoryController extends Controller
     {
         DB::beginTransaction();
         try {
-            $category = AddCategory::findOrFail($id);
+            $category = AdCategory::findOrFail($id);
             $category->delete();
 
             DB::commit();

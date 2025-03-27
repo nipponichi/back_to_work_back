@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('adds_pictures', function (Blueprint $table) {
+        Schema::create('ads_pictures', function (Blueprint $table) {
             $table->id();
             $table->text('path'); // Permite rutas más largas
             $table->enum('type', ['image', 'video']); // Restringe valores
-            $table->foreignId('add_id')
-                  ->constrained('adds')
+            $table->foreignId('ad_id')
+                  ->constrained('ads')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
             $table->timestamps();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('adds_pictures');
+        Schema::dropIfExists('ads_pictures');
     }
 };

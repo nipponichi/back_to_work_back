@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Add extends Model
+class Ad extends Model
 {
     use HasFactory;
 
-    protected $table = 'adds';
+    protected $table = 'ads';
     protected $fillable = [
         'name', 
         'description',
@@ -22,7 +22,7 @@ class Add extends Model
 
     public function category()
     {
-        return $this->belongsTo(addCategory::class, 'category_id', 'id');
+        return $this->belongsTo(adCategory::class, 'category_id', 'id');
     }
     public function user()
     {
@@ -38,17 +38,17 @@ class Add extends Model
 
     public function pictures()
 {
-    return $this->hasMany(AddPicture::class, 'add_id');
+    return $this->hasMany(AdPicture::class, 'ad_id');
 }
 
-    public function addOffer()
+    public function adOffer()
     {
-        return $this->hasMany(AddOffer::class, 'add_id', 'id');
+        return $this->hasMany(AdOffer::class, 'ad_id', 'id');
     }
 
-    public function addChat()
+    public function adChat()
     {
-        return $this->hasMany(AddChat::class, 'add_id', 'id');
+        return $this->hasMany(AdChat::class, 'ad_id', 'id');
     }
 
 }

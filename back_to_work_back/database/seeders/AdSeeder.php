@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class AddSeeder extends Seeder
+class AdSeeder extends Seeder
 {
     /**
      * Run the database seeds.

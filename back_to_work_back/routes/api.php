@@ -7,24 +7,24 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\AddOfferController;
-use App\Http\Controllers\AddController;
-use App\Http\Controllers\AddChatController;
-use App\Http\Controllers\AddCategoryController;
+use App\Http\Controllers\AdOfferController;
+use App\Http\Controllers\AdController;
+use App\Http\Controllers\AdChatController;
+use App\Http\Controllers\AdCategoryController;
 
 Route::prefix('categories')->group(function () {
-    Route::get('/', [AddCategoryController::class, 'index']); // Obtener todas las categorías
-    Route::post('/', [AddCategoryController::class, 'store']); // Crear nueva categoría
-    Route::get('{id}', [AddCategoryController::class, 'show']); // Obtener categoría por ID
-    Route::put('{id}', [AddCategoryController::class, 'update']); // Actualizar categoría
-    Route::delete('{id}', [AddCategoryController::class, 'destroy']); // Eliminar categoría
+    Route::get('/', [AdCategoryController::class, 'index']); // Obtener todas las categorías
+    Route::post('/', [AdCategoryController::class, 'store']); // Crear nueva categoría
+    Route::get('{id}', [AdCategoryController::class, 'show']); // Obtener categoría por ID
+    Route::put('{id}', [AdCategoryController::class, 'update']); // Actualizar categoría
+    Route::delete('{id}', [AdCategoryController::class, 'destroy']); // Eliminar categoría
 });
 
-Route::apiResource('offers', AddOfferController::class);
-Route::apiResource('adds', AddController::class);
-Route::get('chats', [AddChatController::class, 'index']); // Listar todos los chats
-Route::post('chats', [AddChatController::class, 'store']); // Enviar un mensaje
-Route::get('chats/ad/{ad_id}', [AddChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
+Route::apiResource('offers', AdOfferController::class);
+Route::apiResource('ads', AdController::class);
+Route::get('chats', [AdChatController::class, 'index']); // Listar todos los chats
+Route::post('chats', [AdChatController::class, 'store']); // Enviar un mensaje
+Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/signup', [LoginController::class, 'signup']);
