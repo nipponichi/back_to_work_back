@@ -30,7 +30,7 @@ class AdCategoryController extends Controller
         DB::beginTransaction();
         try {
             $validatedData = $request->validate([
-                'category' => 'required|string|max:255|unique:adds_categories,category',
+                'category' => 'required|string|max:255|unique:ads_categories,category',
                 'description' => 'nullable|string|max:500',
             ]);
 
