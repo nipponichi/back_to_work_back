@@ -26,12 +26,8 @@ Route::get('chats', [AdChatController::class, 'index']); // Listar todos los cha
 Route::post('chats', [AdChatController::class, 'store']); // Enviar un mensaje
 Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
 
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/signup', [LoginController::class, 'signup']);
-
-
-Route::post('/login2', [PassportLoginController::class, 'login']);
-Route::post('/signup2', [PassportLoginController::class, 'signup']);
+Route::post('/login', [PassportLoginController::class, 'login']);
+Route::post('/signup', [PassportLoginController::class, 'signup']);
 
 Route::middleware(['auth.validation2'])->group(function () {
     Route::post('/userData2', [PassportLoginController::class, 'userProfile']);
