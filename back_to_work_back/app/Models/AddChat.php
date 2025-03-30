@@ -14,14 +14,14 @@ class addChat extends Model
     protected $fillable = [
         'message', 
         'is_read',
-        'ad_id',
+        'add_id',
         'sender_id',
         'receiver_id'
     ];
 
     public function addChat()
     {
-        return $this->belongsTo(Add::class, 'ad_id', 'id');
+        return $this->belongsTo(Add::class, 'add_id', 'id');
     }
 
     public function sender()

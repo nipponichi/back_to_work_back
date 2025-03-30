@@ -29,7 +29,7 @@ class AddOfferController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Validar los datos de la oferta
+
             $validatedData = $request->validate([
                 'bid' => 'required|numeric|min:0',
                 'description' => 'nullable|string|max:255',
@@ -38,7 +38,6 @@ class AddOfferController extends Controller
                 'user_id' => 'required|integer|exists:users,id',
             ]);
 
-            // Crear la oferta
             $offer = AddOffer::create($validatedData);
 
             DB::commit();

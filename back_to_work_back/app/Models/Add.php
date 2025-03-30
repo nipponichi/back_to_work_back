@@ -24,17 +24,10 @@ class Add extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    /*
-    public function adPicture()
+    public function addPicture()
     {
-        return $this->hasMany(AddPicture::class, 'ad_id', 'id');
+        return $this->hasMany(AddPicture::class, 'add_id', 'id');
     }
-    */
-
-    public function pictures()
-{
-    return $this->hasMany(AddPicture::class, 'add_id');
-}
 
     public function addOffer()
     {

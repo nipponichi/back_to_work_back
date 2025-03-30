@@ -17,7 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'id.validation' => IdValidation::class,
             'auth.validation' => \App\Http\Middleware\Authenticate::class,
-            'auth.validation2' => \App\Http\Middleware\Authenticate2::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

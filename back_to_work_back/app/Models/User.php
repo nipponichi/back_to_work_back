@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-//use Laravel\Sanctum\HasApiTokens;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'type'
     ];
 
     /**
@@ -47,24 +47,24 @@ class User extends Authenticatable
         ];
     }
 
-    public function ad()
+    public function add()
     {
-        return $this->hasMany(Ad::class, 'ad_id', 'id');
+        return $this->hasMany(Add::class, 'user_id', 'id');
     }
     
-    public function adOffer()
+    public function addOffer()
     {
-        return $this->hasMany(AdOffer::class, 'user_id', 'id');
+        return $this->hasMany(AddOffer::class, 'user_id', 'id');
     }
 
-    public function adPicture()
+    public function addPicture()
     {
-        return $this->hasMany(AdPicture::class, 'user_id', 'id');
+        return $this->hasMany(AddPicture::class, 'user_id', 'id');
     }
 
-    public function adChat()
+    public function addChat()
     {
-        return $this->hasMany(AdChat::class, 'user_id', 'id');
+        return $this->hasMany(AddChat::class, 'user_id', 'id');
     }
 
     public function userStat()

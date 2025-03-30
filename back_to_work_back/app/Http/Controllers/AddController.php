@@ -8,9 +8,18 @@ use App\Models\AddPicture;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controller;
 
 class AddController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['can:read adds'])->only('index', 'show');
+        $this->middleware(['can:create adds'])->only('store');
+        $this->middleware(['can:update adds'])->only('update');
+        $this->middleware(['can:delete adds'])->only('destroy');
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -104,13 +113,12 @@ class AddController extends Controller
 
             // Si hay nuevos archivos, eliminamos los anteriores y agregamos los nuevos
             if ($request->hasFile('media')) {
-                // Eliminar archivos físicos antiguos
+                
                 foreach ($add->pictures as $picture) {
                     Storage::disk('public')->delete($picture->path);
                     $picture->delete();
                 }
 
-                // Subir nuevos archivos
                 foreach ($request->file('media') as $file) {
                     $path = $file->store('adds_media', 'public');
                     $type = str_contains($file->getMimeType(), 'image') ? 'image' : 'video';
@@ -140,13 +148,11 @@ class AddController extends Controller
         try {
             $add = Add::findOrFail($id);
 
-            // Eliminar archivos físicos de las imágenes/videos antes de eliminar el add
             foreach ($add->pictures as $picture) {
                 Storage::disk('public')->delete($picture->path);
                 $picture->delete();
             }
 
-            // Eliminar el add
             $add->delete();
 
             DB::commit();
@@ -157,16 +163,4 @@ class AddController extends Controller
         }
     }
 
-    /**
-     * Get a single add with its relationships.
-     */
-    public function getAdd($id)
-    {
-        try {
-            $add = Add::with(['user', 'pictures', 'adOffer', 'adChat'])->findOrFail($id);
-            return response()->json(['success' => true, 'message' => 'Add loaded correctly', 'data' => $add], 200);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error loading add: ' . $e->getMessage()], 500);
-        }
-    }
 }

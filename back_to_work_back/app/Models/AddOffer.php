@@ -19,7 +19,7 @@ class AddOffer extends Model
         'user_id' 
     ];
 
-    public function ad()
+    public function add()
     {
         return $this->belongsTo(Add::class, 'add_id', 'id');
     }
