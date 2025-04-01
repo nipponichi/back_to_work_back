@@ -7,10 +7,12 @@ use App\Http\Controllers\AdOfferController;
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\AdChatController;
 use App\Http\Controllers\AdCategoryController;
+use App\Http\Controllers\UserStatsController;
 
 Route::apiResource('categories',AdCategoryController::class);
 Route::apiResource('offers', AdOfferController::class);
 Route::apiResource('ads', AdController::class);
+Route::apiResource('userstats', UserStatsController::class);
 Route::get('chats', [AdChatController::class, 'index']); // Listar todos los chats
 Route::post('chats', [AdChatController::class, 'store']); // Enviar un mensaje
 Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
