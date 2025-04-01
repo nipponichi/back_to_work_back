@@ -160,16 +160,4 @@ class AdController extends Controller
         }
     }
 
-    /**
-     * Obtener un anuncio con todas sus relaciones.
-     */
-    public function getAd($id)
-    {
-        try {
-            $ad = Ad::with(['user', 'pictures', 'adOffer', 'adChat'])->findOrFail($id);
-            return response()->json(['success' => true, 'message' => 'Ad loaded correctly', 'data' => $ad], 200);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error loading ad: ' . $e->getMessage()], 500);
-        }
-    }
 }
