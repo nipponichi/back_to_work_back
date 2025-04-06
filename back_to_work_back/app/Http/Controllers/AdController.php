@@ -8,6 +8,7 @@ use App\Models\AdPicture;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdController extends Controller
 {
@@ -27,6 +28,8 @@ class AdController extends Controller
     /**
      * Crear un nuevo anuncio con imágenes/videos.
      */
+
+     /*
     public function store(Request $request)
     {
         DB::beginTransaction();
@@ -69,6 +72,77 @@ class AdController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Error saving ad: ' . $e->getMessage()], 500);
+        }
+    }
+    */
+
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+    
+        try {
+            // Validar datos del anuncio
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:32',
+                'description' => 'nullable|string|max:255',
+                'category_id' => 'required|integer|exists:ads_categories,id',
+                'due_date' => 'nullable|date|after_or_equal:today',
+                'location' => 'required|string|max:64',
+                'is_done' => 'required|boolean',
+                'user_id' => 'required|integer|exists:users,id',
+                'media' => 'file|max:20480|mimetypes:image/jpeg,image/png,video/mp4,video/quicktime',
+            ]);
+    
+            // Crear el anuncio
+            $ad = Ad::create($validatedData);
+    
+            // Procesar los archivos multimedia (si existen)
+            if ($request->hasFile('media')) {
+                $mediaFiles = [];
+    
+                // Obtener los archivos, sea uno o varios
+                $files = $request->file('media');
+    
+                // Si solo hay un archivo, lo convertimos a array
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+    
+                foreach ($files as $file) {
+                    // Guardar el archivo en el storage
+                    $path = $file->store('ads_media', 'public');
+                    $mime = $file->getMimeType();
+                    $type = str_starts_with($mime, 'image') ? 'image' : 'video';
+    
+                    // Preparar los datos para insertar en la tabla 'ads_pictures'
+                    $mediaFiles[] = [
+                        'path' => $path,
+                        'type' => $type,
+                        'ad_id' => $ad->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+    
+                // Insertar en 'ads_pictures'
+                AdPicture::insert($mediaFiles);
+            }
+    
+            DB::commit();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Ad and media saved',
+                'data' => $ad->load('pictures') // Cargar relación 'pictures' de 'ad'
+            ], 201);
+    
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving ad: ' . $e->getMessage()
+            ], 500);
         }
     }
 
