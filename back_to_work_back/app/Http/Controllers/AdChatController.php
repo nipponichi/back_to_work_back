@@ -3,27 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\AddChat;
+use App\Models\AdChat;
 use Illuminate\Support\Facades\DB;
 use Exception;
-use Illuminate\Routing\Controller;
 
-class AddChatController extends Controller
+class AdChatController extends Controller
 {
-    public function __construct() {
-        $this->middleware(['can: read chats'])->only('index', 'show');
-        $this->middleware(['can: delete chats'])->only('destroy');
-        $this->middleware(['can: delete full chats'])->only('destroyMessage');
-        $this->middleware(['can: update chats'])->only('update');
-        $this->middleware(['can: create chats'])->only('create');
-    }
     /**
      * Obtener todos los mensajes.
      */
     public function index()
     {
         try {
-            $chats = AddChat::with(['addChat', 'sender', 'receiver'])->get();
+            $chats = AdChat::with(['adChat', 'sender', 'receiver'])->get();
             return response()->json(['success' => true, 'message' => 'Chats loaded correctly', 'data' => $chats], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading chats: ' . $e->getMessage()], 500);
@@ -37,15 +29,17 @@ class AddChatController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Validar los datos del mensaje
             $validatedData = $request->validate([
                 'message' => 'required|string|max:1000',
                 'is_read' => 'required|boolean',
-                'add_id' => 'required|integer|exists:adds,id',
+                'ad_id' => 'required|integer|exists:ads,id',
                 'sender_id' => 'required|integer|exists:users,id',
                 'receiver_id' => 'required|integer|exists:users,id',
             ]);
 
-            $chat = AddChat::create($validatedData);
+            // Crear el mensaje en el chat
+            $chat = AdChat::create($validatedData);
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Message sent successfully', 'data' => $chat], 201);
@@ -56,12 +50,12 @@ class AddChatController extends Controller
     }
 
     /**
-     * Obtener mensajes por anuncio (add_id).
+     * Obtener mensajes por anuncio (ad_id).
      */
-    public function show($id)
+    public function getMessagesByAd($ad_id)
     {
         try {
-            $messages = AddChat::where('add_id', $id)
+            $messages = AdChat::where('ad_id', $ad_id)
                 ->with(['sender', 'receiver'])
                 ->orderBy('created_at', 'asc')
                 ->get();
@@ -69,26 +63,6 @@ class AddChatController extends Controller
             return response()->json(['success' => true, 'message' => 'Messages loaded correctly', 'data' => $messages], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading messages: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function destroy($id) {
-        try {
-            $message = AddChat::findOrFail($id);
-            $message->delete();
-            return response()->json(['success' => true, 'message' => 'Message deleted correctly', 'data' => ''], 200);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error deleting message: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function destroyChat($add_Id) {
-        try {
-            $chat = AddChat::findOrFail($add_Id, 'add_id');
-            $chat->delete();
-            return response()->json(['success' => true, 'message' => 'Chat deleted correctly', 'data' => ''], 200);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error deleting chat: ' . $e->getMessage()], 500);
         }
     }
 }

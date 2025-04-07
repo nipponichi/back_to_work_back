@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('adds_pictures', function (Blueprint $table) {
+        Schema::create('ads_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('path'); // Almacena la ruta del archivo
-            $table->string('type'); // "image" o "video"
-            $table->foreignId('add_id')->constrained('adds')->onDelete('cascade');
+            $table->string('category');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('adds_pictures');
+        Schema::dropIfExists('ads_categories');
     }
 };

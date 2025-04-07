@@ -41,26 +41,21 @@ class PassportLoginController extends Controller
     public function login(Request $request)
     {
         try {
+
             if (Auth::guard('api')->check()) {
                 return response()->json(['succes'=> true, 'message' => 'Already authentified'], 200);
             }
     
-            $field = filter_var($request->name, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
-    
             $validations = [
+                'email' => 'required|string',
                 'password' => 'required|string',
             ];
             
-            if ($field === 'email') {
-                $validations['name'] = 'required|email';
-            } else {
-                $validations['name'] = 'required|string';
-            }
     
             $validatedData = $request->validate($validations);
     
             $data = [
-                $field => $validatedData['name'],
+                'email' => $validatedData['email'],
                 'password' => $validatedData['password'],
             ];
     

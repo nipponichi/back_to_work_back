@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class addChat extends Model
+class adChat extends Model
 {
     use HasFactory;
 
-    protected $table = 'add_chats';
+    protected $table = 'ads_chats';
 
     protected $fillable = [
         'message', 
         'is_read',
-        'add_id',
+        'ad_id',
         'sender_id',
         'receiver_id'
     ];
 
-    public function addChat()
+    public function adChat()
     {
-        return $this->belongsTo(Add::class, 'add_id', 'id');
+        return $this->belongsTo(Ad::class, 'ad_id', 'id');
     }
 
     public function sender()

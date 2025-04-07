@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('adds', function (Blueprint $table) {
+        Schema::create('ads_offers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->float('bid');
             $table->string('description')->nullable();
-            $table->date('due_date')->nullable();
-            $table->string('location')->nullable();
-            $table->boolean('is_done')->default(false);
+            $table->boolean('is_valid')->default(true);
+            $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('adds');
+        Schema::dropIfExists('ads_offers');
     }
 };
