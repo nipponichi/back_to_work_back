@@ -81,31 +81,26 @@ class AdController extends Controller
         DB::beginTransaction();
     
         try {
-            // Validar datos del anuncio
             $validatedData = $request->validate([
                 'name' => 'required|string|max:32',
-                'description' => 'required|string|max:500', // Ajustado a 500 como en el frontend
+                'description' => 'required|string|max:500',
                 'category_id' => 'required|integer|exists:ads_categories,id',
-                'location' => 'required|string|max:50', // Ajustado a 50 como en el frontend
+                'location' => 'required|string|max:50',
                 'is_done' => 'required|boolean',
                 'user_id' => 'required|integer|exists:users,id',
-                'media' => 'required|array', // Validar que es un array
-                'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,image/jpg,video/mp4', // Validar cada archivo
+                'media' => 'array',
+                'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,image/jpg,video/mp4',
             ]);
     
-            // Crear el anuncio
+
             $ad = Ad::create($validatedData);
-    
-            // Procesar los archivos multimedia
+
             if ($request->hasFile('media')) {
                 $mediaFiles = [];
-    
+                
                 foreach ($request->file('media') as $file) {
-                    // Guardar el archivo en el storage
                     $path = $file->store('ads_media', 'public');
                     $mimeType = $file->getMimeType();
-    
-                    // Determinar el tipo de medio (imagen o video)
                     $type = str_starts_with($mimeType, 'image') ? 'image' : 'video';
     
                     $mediaFiles[] = [
@@ -116,8 +111,7 @@ class AdController extends Controller
                         'updated_at' => now(),
                     ];
                 }
-    
-                // Insertar todos los medios en la base de datos
+                
                 AdPicture::insert($mediaFiles);
             }
     
@@ -172,10 +166,9 @@ class AdController extends Controller
                 'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,video/mp4,video/quicktime'
             ]);
 
-            // Actualizar los datos del anuncio sin tocar las imágenes/videos
+
             $ad->update($validatedData);
 
-            // Si hay nuevos archivos, los agregamos sin eliminar los existentes
             if ($request->hasFile('media')) {
                 $mediaFiles = [];
                 foreach ($request->file('media') as $file) {

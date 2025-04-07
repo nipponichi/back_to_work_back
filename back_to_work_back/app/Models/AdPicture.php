@@ -17,7 +17,7 @@ class AdPicture extends Model
         'ad_id',
     ];
 
-    public function add()
+    public function ad()
     {
         return $this->belongsTo(Ad::class, 'ad_id');
     }
