@@ -106,4 +106,18 @@ class AdOfferController extends Controller
             return response()->json(['success' => false, 'message' => 'Error deleting offer: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+ * Obtener todas las ofertas por ID de anuncio.
+ */
+public function getOffersByAdId($adId)
+{
+    try {
+        $offers = AdOffer::where('ad_id', $adId)->with(['ad', 'user'])->get();
+        return response()->json(['success' => true, 'message' => 'Offers loaded correctly', 'data' => $offers], 200);
+    } catch (Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Error loading offers: ' . $e->getMessage()], 500);
+    }
+}
+
 }
