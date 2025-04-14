@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ads_pictures', function (Blueprint $table) {
+        Schema::create('pro_categories', function (Blueprint $table) {
             $table->id();
-            $table->text('path');
-            $table->enum('type', ['image', 'video']);
-            $table->foreignId('ad_id')
-                  ->constrained('ads')
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('ads_categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ads_pictures');
+        Schema::dropIfExists('pro_categories');
     }
 };

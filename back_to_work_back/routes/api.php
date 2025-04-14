@@ -8,11 +8,14 @@ use App\Http\Controllers\AdController;
 use App\Http\Controllers\AdChatController;
 use App\Http\Controllers\AdCategoryController;
 use App\Http\Controllers\UserStatsController;
+use App\Http\Controllers\UserController;
 
 Route::apiResource('categories',AdCategoryController::class);
 Route::apiResource('offers', AdOfferController::class);
 Route::apiResource('ads', AdController::class);
 Route::apiResource('userstats', UserStatsController::class);
+Route::apiResource('users', UserController::class);
+
 Route::get('chats', [AdChatController::class, 'index']); // Listar todos los chats
 Route::post('chats', [AdChatController::class, 'store']); // Enviar un mensaje
 Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
@@ -30,10 +33,7 @@ Route::middleware(['auth.validation'])->group(function(){
     Route::middleware(['id.validation'])->group(function () {
     });
 
-    Route::get('/userdata', [LoginController::class, 'userProfile']);
-    Route::post('/logout', [LoginController::class, 'logout']);
-
-    Route::post('/logout2', [PassportLoginController::class, 'logout']);
+    Route::post('/logout', [PassportLoginController::class, 'logout']);
 
 });  
  

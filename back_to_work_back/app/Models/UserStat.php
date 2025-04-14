@@ -25,6 +25,6 @@ class UserStat extends Model
     }
     public function ad()
     {
-        return $this->belongsTo(Add::class, 'add_id', 'id');
+        return $this->belongsTo(Ad::class, 'add_id', 'id');
     }
 }

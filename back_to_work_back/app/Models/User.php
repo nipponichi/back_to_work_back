@@ -47,28 +47,33 @@ class User extends Authenticatable
         ];
     }
 
-    public function add()
+    public function ad()
     {
-        return $this->hasMany(Add::class, 'user_id', 'id');
+        return $this->hasMany(Ad::class, 'user_id', 'id');
     }
     
-    public function addOffer()
+    public function adOffer()
     {
-        return $this->hasMany(AddOffer::class, 'user_id', 'id');
+        return $this->hasMany(AdOffer::class, 'user_id', 'id');
     }
 
-    public function addPicture()
+    public function adPicture()
     {
-        return $this->hasMany(AddPicture::class, 'user_id', 'id');
+        return $this->hasMany(AdPicture::class, 'user_id', 'id');
     }
 
-    public function addChat()
+    public function adChat()
     {
-        return $this->hasMany(AddChat::class, 'user_id', 'id');
+        return $this->hasMany(AdChat::class, 'user_id', 'id');
     }
 
     public function userStat()
     {
         return $this->hasOne(UserStat::class, 'user_id', 'id');
     }
+    public function categories()
+    {
+        return $this->belongsToMany(AdCategory::class, 'pro_categories', 'user_id', 'category_id');
+    }
+
 }
