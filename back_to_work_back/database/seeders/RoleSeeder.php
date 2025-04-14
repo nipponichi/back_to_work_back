@@ -18,10 +18,10 @@ class RoleSeeder extends Seeder
         $roleUser = Role::create(['name' => 'user']);
 
         // Ads
-        $createAdPermission = Permission::create(['name' => 'create adds']);
-        $readAdPermission = Permission::create(['name' => 'read adds']);
-        $updateAdPermission = Permission::create(['name' => 'update adds']);
-        $deleteAdPermission = Permission::create(['name' => 'delete adds']);
+        $createAdPermission = Permission::create(['name' => 'create ads']);
+        $readAdPermission = Permission::create(['name' => 'read ads']);
+        $updateAdPermission = Permission::create(['name' => 'update ads']);
+        $deleteAdPermission = Permission::create(['name' => 'delete ads']);
 
         // Chats
         $createChatPermission = Permission::create(['name' => 'create chats']);
@@ -58,7 +58,7 @@ class RoleSeeder extends Seeder
 
         $roleUser->givePermissionTo(
             $readUserPermission, $readCategoryPermission,
-            $createAddPermission, $readAddPermission, $updateAddPermission, $deleteAddPermission,
+            $createAdPermission, $readAdPermission, $updateAdPermission, $deleteAdPermission,
             $createOfferPermission, $readOfferPermission, $updateOfferPermission, $deleteOfferPermission,
             $createChatPermission, $readChatPermission, $updateChatPermission, $deleteChatPermission,
         );
