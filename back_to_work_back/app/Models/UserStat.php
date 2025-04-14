@@ -16,7 +16,7 @@ class UserStat extends Model
         'timing',
         'review',
         'user_id',
-        'add_id'
+        'ad_id'
     ];
 
     public function user()
@@ -25,6 +25,6 @@ class UserStat extends Model
     }
     public function ad()
     {
-        return $this->belongsTo(Ad::class, 'add_id', 'id');
+        return $this->belongsTo(Ad::class, 'ad_id', 'id');
     }
 }

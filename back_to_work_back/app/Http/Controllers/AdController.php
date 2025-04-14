@@ -18,8 +18,8 @@ class AdController extends Controller
     public function index()
     {
         try {
-            $adds = Ad::with(['pictures:id,ad_id,path,type'])->get();
-            return response()->json(['success' => true, 'message' => 'Ads loaded correctly', 'data' => $adds], 200);
+            $ads = Ad::with(['pictures:id,ad_id,path,type'])->get();
+            return response()->json(['success' => true, 'message' => 'Ads loaded correctly', 'data' => $ads], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading ads: ' . $e->getMessage()], 500);
         }

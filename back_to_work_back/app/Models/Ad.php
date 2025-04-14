@@ -32,7 +32,7 @@ class Ad extends Model
     /*
     public function adPicture()
     {
-        return $this->hasMany(AddPicture::class, 'ad_id', 'id');
+        return $this->hasMany(AdPicture::class, 'ad_id', 'id');
     }
     */
 

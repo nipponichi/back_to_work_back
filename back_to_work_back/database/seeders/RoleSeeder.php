@@ -17,11 +17,11 @@ class RoleSeeder extends Seeder
         $roleAdmin = Role::create(['name' => 'admin']);
         $roleUser = Role::create(['name' => 'user']);
 
-        // Adds
-        $createAddPermission = Permission::create(['name' => 'create adds']);
-        $readAddPermission = Permission::create(['name' => 'read adds']);
-        $updateAddPermission = Permission::create(['name' => 'update adds']);
-        $deleteAddPermission = Permission::create(['name' => 'delete adds']);
+        // Ads
+        $createAdPermission = Permission::create(['name' => 'create adds']);
+        $readAdPermission = Permission::create(['name' => 'read adds']);
+        $updateAdPermission = Permission::create(['name' => 'update adds']);
+        $deleteAdPermission = Permission::create(['name' => 'delete adds']);
 
         // Chats
         $createChatPermission = Permission::create(['name' => 'create chats']);
@@ -49,7 +49,7 @@ class RoleSeeder extends Seeder
         $deleteCategoryPermission = Permission::create(['name' => 'delete categories']);
 
         $roleAdmin->givePermissionTo(
-            $createAddPermission, $readAddPermission, $updateAddPermission, $deleteAddPermission,
+            $createAdPermission, $readAdPermission, $updateAdPermission, $deleteAdPermission,
             $createUserPermission, $readUserPermission, $updateUserPermission, $deleteUserPermission,
             $createOfferPermission, $readOfferPermission, $updateOfferPermission, $deleteOfferPermission,
             $createCategoryPermission, $readCategoryPermission, $updateCategoryPermission, $deleteCategoryPermission,
