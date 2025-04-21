@@ -76,4 +76,8 @@ class User extends Authenticatable
         return $this->belongsToMany(AdCategory::class, 'pro_categories', 'user_id', 'category_id');
     }
 
+    public function provinces()
+    {
+        return $this->belongsTo(Province::class, 'province_id', 'id');
+    }
 }

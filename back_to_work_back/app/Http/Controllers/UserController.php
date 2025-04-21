@@ -12,7 +12,7 @@ class UserController extends Controller
     public function index()
     {
         try {
-            $users = User::with('categories')->where('is_pro', true)->get();
+            $users = User::with(['categories', 'provinces'])->where('is_pro', true)->get();
             return response()->json(['success' => true, 'message' => 'Users loaded correctly', 'data' => $users], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading users: ' . $e->getMessage()], 500);
