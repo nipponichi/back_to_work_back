@@ -18,4 +18,14 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'Error loading users: ' . $e->getMessage()], 500);
         }
     }
+
+    public function show($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            return response()->json(['success' => true, 'message' => 'User loaded correctly', 'data' => $user], 200);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+    }
 }
