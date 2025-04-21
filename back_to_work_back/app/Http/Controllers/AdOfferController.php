@@ -113,10 +113,22 @@ class AdOfferController extends Controller
 public function getOffersByAdId($adId)
 {
     try {
-        $offers = AdOffer::where('ad_id', $adId)->with(['ad', 'user'])->get();
-        return response()->json(['success' => true, 'message' => 'Offers loaded correctly', 'data' => $offers], 200);
-    } catch (Exception $e) {
-        return response()->json(['success' => false, 'message' => 'Error loading offers: ' . $e->getMessage()], 500);
+        $offers = AdOffer::where('ad_id', $adId)
+            ->with(['ad', 'user']) // Incluye relaciones completas
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Offers loaded correctly',
+            'data' => $offers
+        ], 200);
+    } catch (\Throwable $e) {
+
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error loading offers: ' . $e->getMessage()
+        ], 500);
     }
 }
 
