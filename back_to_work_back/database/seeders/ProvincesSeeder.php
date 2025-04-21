@@ -10,15 +10,15 @@ class ProvincesSeeder extends Seeder
     public function run(): void
     {
         $provinces = [
-            'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila',
-            'Badajoz', 'Barcelona', 'Burgos', 'Cáceres', 'Cádiz', 'Cantabria',
-            'Castellón', 'Ciudad Real', 'Córdoba', 'Cuenca', 'Girona', 'Granada',
-            'Guadalajara', 'Guipúzcoa', 'Huelva', 'Huesca', 'Illes Balears', 
-            'Jaén', 'La Coruña', 'La Rioja', 'Las Palmas', 'León', 'Lleida',
-            'Lugo', 'Madrid', 'Málaga', 'Murcia', 'Navarra', 'Ourense', 'Palencia',
+            'Alava', 'Albacete', 'Alicante', 'Almeria', 'Asturias', 'Avila',
+            'Badajoz', 'Barcelona', 'Burgos', 'Caceres', 'Cadiz', 'Cantabria',
+            'Castellon', 'Ciudad Real', 'Cordoba', 'Cuenca', 'Girona', 'Granada',
+            'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Islas Baleares', 
+            'Jaen', 'La Coruña', 'La Rioja', 'Las Palmas', 'Leon', 'Lleida',
+            'Lugo', 'Madrid', 'Malaga', 'Murcia', 'Navarra', 'Ourense', 'Palencia',
             'Pontevedra', 'Salamanca', 'Santa Cruz de Tenerife', 'Segovia', 'Sevilla',
             'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid',
-            'Vizcaya', 'Zamora', 'Zaragoza'
+            'Vizcaya', 'Zamora', 'Zaragoza', 'Ceuta', 'Melilla'
         ];
 
         foreach ($provinces as $province) {
