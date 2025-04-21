@@ -29,17 +29,10 @@ class Ad extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    /*
-    public function adPicture()
-    {
-        return $this->hasMany(AddPicture::class, 'ad_id', 'id');
-    }
-    */
-
     public function pictures()
-{
-    return $this->hasMany(AdPicture::class, 'ad_id');
-}
+    {
+        return $this->hasMany(AdPicture::class, 'ad_id');
+    }
 
     public function adOffer()
     {

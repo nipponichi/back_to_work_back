@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class adCategory extends Model
+class AdCategory extends Model
 {
     use HasFactory;
 
@@ -15,4 +15,9 @@ class adCategory extends Model
         'category', 
         'description'
     ];
+
+    public function professionals()
+    {
+        return $this->belongsToMany(User::class, 'pro_categories', 'category_id', 'user_id');
+    }
 }

@@ -19,7 +19,7 @@ class AdOffer extends Model
         'user_id' 
     ];
 
-    public function add()
+    public function ad()
     {
         return $this->belongsTo(Ad::class, 'ad_id', 'id');
     }
