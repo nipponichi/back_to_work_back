@@ -28,4 +28,23 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found'], 404);
         }
     }
+
+    public function blockUser($id)
+{
+    $user = User::findOrFail($id);
+    $user->is_blocked = true; 
+    $user->save();
+
+    return response()->json(['success' => true]);
+}
+
+public function unblockUser($id)
+{
+    $user = User::findOrFail($id);
+    $user->is_blocked = false; 
+    $user->save();
+
+    return response()->json(['success' => true]);
+}
+
 }

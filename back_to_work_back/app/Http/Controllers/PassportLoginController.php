@@ -38,45 +38,52 @@ class PassportLoginController extends Controller
         }
         
     }
+  
     public function login(Request $request)
-    {
-        try {
-
-            if (Auth::guard('api')->check()) {
-                return response()->json(['succes'=> true, 'message' => 'Already authentified'], 200);
-            }
-    
-            $validations = [
-                'email' => 'required|string',
-                'password' => 'required|string',
-            ];
-            
-    
-            $validatedData = $request->validate($validations);
-    
-            $data = [
-                'email' => $validatedData['email'],
-                'password' => $validatedData['password'],
-            ];
-    
-            if (Auth::attempt($data)) {
-                $user = Auth::user();
-                if (!$user) {
-                    return response()->json(['success' => false, 'message' => 'User not found'], 404);
-                }
-                $token = $user->createToken('token')->accessToken;
-                $answer = [
-                    'user' => $user,
-                    'accessToken' => $token
-                ];
-                return response()->json(['success' => true, 'message' => 'Logged succesfully', 'data' => $answer], 200);
-            }
-            return response()->json(['success' => false, 'message' => 'Unauthorized login'], 401);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error while login: ' . $e->getMessage(), 'data' => ''], 500);
+{
+    try {
+        if (Auth::guard('api')->check()) {
+            return response()->json(['success' => true, 'message' => 'Already authenticated'], 200);
         }
 
+        $validations = [
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ];
+
+        $validatedData = $request->validate($validations);
+
+        $data = [
+            'email' => $validatedData['email'],
+            'password' => $validatedData['password'],
+        ];
+
+        if (Auth::attempt($data)) {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['success' => false, 'message' => 'User not found'], 404);
+            }
+
+            // Verificamos si el usuario está bloqueado (campo 'is_blocked')
+            if ($user->is_blocked) {
+                return response()->json(['success' => false, 'message' => 'Your account has been blocked'], 403);
+            }
+
+            $token = $user->createToken('token')->accessToken;
+            $answer = [
+                'user' => $user,
+                'accessToken' => $token
+            ];
+            return response()->json(['success' => true, 'message' => 'Logged in successfully', 'data' => $answer], 200);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Unauthorized login'], 401);
+    } catch (Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Error while logging in: ' . $e->getMessage(), 'data' => ''], 500);
     }
+}
+
 
     public function userProfile()
     {
