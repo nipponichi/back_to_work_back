@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Exception;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\DB;
 use Str;
 
 class UserController extends Controller
@@ -70,7 +70,7 @@ class UserController extends Controller
 
             Mail::to($user->email)->send(new SendMail([
                 'id' => $user->id,
-                'nombre' => $user->name,
+                'name' => $user->name,
                 'email' => $user->email,
                 'signature' => explode('=', parse_url($signedUrl, PHP_URL_QUERY))[1]
             ], SendMail::TEMPLATE_WELCOME));
@@ -138,36 +138,27 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'Error sending password reset email: ' . $e->getMessage()], 500);
         }
     }
-    public function resetPassword($id)
+
+    public function updatePassword(Request $request)
     {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:4|confirmed'
+        ]);
+
         try {
 
-            if (!is_numeric($id)) {
-                return response()->json(['success' => false, 'message' => 'ID inválido'], 400);
-            }
-    
-            $user = User::findOrFail(1);
-            
-            $newPassword = Str::random(8);
-            $user->password = bcrypt($newPassword);
+            $user = User::where('email', $request->email)->firstOrFail();
+            $user->password = bcrypt($request->password);
             $user->save();
-    
-            Mail::to('iwant_it_all@hotmail.com')->send(new SendMail(
-                [
-                    'nombre' => $user->name,
-                    'mensaje' => 'Su nueva contraseña es: '.$newPassword
-                ],
-                SendMail::TEMPLATE_NOTIFICATION
-            ));
-    
-            return response()->json(['success' => true, 'message' => 'Contraseña restablecida correctamente'], 200);
-    
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['success' => false, 'message' => 'Usuario no encontrado'], 404);
-            
+
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+            return response()->json(['success' => true, 'message' => 'Contraseña actualizada']);
+
         } catch (Exception $e) {
-            return response()->json([
-                'success' => false, 'message' => 'Error al restablecer la contraseña: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error al actualizar'], 500);
         }
     }
 }

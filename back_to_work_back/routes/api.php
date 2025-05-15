@@ -29,10 +29,13 @@ Route::apiResource('users', UserController::class);
 Route::apiResource('provinces', ProvinceController::class);
 
 
-// Cambiar a post por seguridad utilizando un metodo get para que funcione el enlace con el token
-Route::get('reset-password/{id}', [UserController::class, 'resetPassword']);
+Route::post('reset-password', [MailController::class, 'requestPasswordReset']);
+
+Route::post('validate-reset-token', [VerificationController::class, 'validateResetToken']);
+
+Route::post('update-password', [UserController::class, 'updatePassword']);
+
 Route::get('welcome-mail', [MailController::class, 'welcomeMessage']);
-Route::get('password-reset-mail', [MailController::class, 'passwordReset']);
 Route::get('bid-notification-mail', [MailController::class, 'newBid']);
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class VerificationController extends Controller
@@ -37,4 +38,28 @@ public function verify(Request $request)
 
         return response()->json(['success' => true, 'message' => 'Email de verificación reenviado'], 200);
     }
+
+    public function validateResetToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        $record = DB::table('password_reset_tokens')
+                    ->where('email', $request->email)
+                    ->first();
+
+        if (!$record || !password_verify($request->token, $record->token)) {
+            return response()->json(['success' => false, 'message' => 'Token no válido'], 400);
+        }
+
+        if (now()->subHours(1)->gt($record->created_at)) {
+            return response()->json(['success' => false, 'message' => 'Token expirado'], 400);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Token validado correctamente'], 200);
+    }
 }
+
+

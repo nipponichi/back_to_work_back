@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Mail\SendMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+use Str;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class MailController extends Controller
@@ -14,54 +17,61 @@ class MailController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'nombre' => 'required|string',
-            'mensaje' => 'required|string'
+            'name' => 'required|string',
+            'message' => 'required|string'
         ]);
 
         try {
             $data = [
                 'email' => $request->email,
-                'nombre' => $request->nombre,
-                'mensaje' => $request->mensaje               
+                'name' => $request->nombre,
+                'message' => $request->mensaje               
             ];
 
-
-
-        Mail::to($data['email'])->send(new SendMail(
-            ['nombre' => $data['nombre'], 'email' => $data['email']],
-            SendMail::TEMPLATE_WELCOME
-        ));
+            Mail::to($data['email'])->send(new SendMail(
+                ['nombre' => $data['nombre'], 'email' => $data['email']],
+                SendMail::TEMPLATE_WELCOME
+            ));
             return response()->json(['success' => true, 'message' => 'Correo enviado correctamente WELCOME']);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error al enviar el correo', 'error' => $e->getMessage()], 500);
         }
     }
 
-    public function passwordReset(Request $request)
+    public function requestPasswordReset(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'nombre' => 'required|string',
-            'mensaje' => 'required|string'
-        ]);
-            // Token prueba
-            $token = '1234';
-        try {
-            $data = [
-                'email' => $request->email,
-                'nombre' => $request->nombre,
-                'mensaje' => $request->mensaje               
-            ];
+        $request->validate(['email' => 'required|email']);
 
-            Mail::to($data['email'])->send(new SendMail(
-                ['nombre' => $data['nombre'], 'mensaje' => $data['mensaje']],
+        try {
+            $user = User::where('email', $request->email)->firstOrFail();
+
+            // Generar token único
+            $token = Str::random(60);
+
+            // Guardar token hasheado
+            DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $user->email],
+                ['token' => bcrypt($token), 
+                'created_at' => now()]
+            );
+            
+            // Enlace al FRONTEND con el token sin hashear y email
+            $frontendUrl = config('app.frontend_url')."reset-password?token=$token&email=".urlencode($user->email);
+
+            Mail::to($user->email)->send(new SendMail(
+                [
+                    'name' => $user->name,
+                    'reset_link' => $frontendUrl,
+                    'message' => 'Haga clic para restablecer su contraseña'
+                ],
                 SendMail::TEMPLATE_RESET_PASSWORD,
-                'Restablecimiento de contraseña'
+                'Restablecer contraseña'
             ));
 
-            return response()->json(['success' => true, 'message' => 'Correo enviado correctamente RESET']);
+            return response()->json(['success' => true, 'message' => 'Enlace enviado']);
+
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error al enviar el correo', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Error al procesar'], 500);
         }
     }
 

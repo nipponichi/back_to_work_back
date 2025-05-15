@@ -55,105 +55,9 @@ public function envelope(): Envelope
         return new Content(htmlString: $html);
     }
 
-/*     protected function getWelcomeTemplate(): string
-    {
-        return '
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style type="text/css">
-                body {
-                    font-family: "Helvetica Neue", Arial, sans-serif;
-                    line-height: 1.6;
-                    color: #333333;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                }
-                .header {
-                    text-align: center;
-                    padding-bottom: 20px;
-                    border-bottom: 1px solid #eeeeee;
-                    margin-bottom: 30px;
-                }
-                .logo {
-                    max-width: 200px;
-                    height: auto;
-                    margin-bottom: 20px;
-                }
-                h1 {
-                    color: #2c3e50;
-                    font-size: 24px;
-                    margin-bottom: 20px;
-                }
-                p {
-                    margin-bottom: 15px;
-                    font-size: 16px;
-                }
-                .highlight {
-                    background-color: #f8f9fa;
-                    padding: 15px;
-                    border-radius: 4px;
-                    margin: 20px 0;
-                }
-                .btn-verify {
-                    display: inline-block;
-                    padding: 12px 24px;
-                    background-color: #3498db;
-                    color: white !important;
-                    text-decoration: none;
-                    border-radius: 4px;
-                    font-weight: bold;
-                    margin: 15px 0;
-                }
-                .footer {
-                    margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #eeeeee;
-                    font-size: 14px;
-                    color: #7f8c8d;
-                    text-align: center;
-                }
-                .verification-text {
-                    word-break: break-all;
-                    font-size: 14px;
-                    color: #7f8c8d;
-                    margin-top: 10px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_Williams_F1.png" alt="We Agree Logo" class="logo">
-            </div>
-            
-            <h1>¡Bienvenido a We Agree, '.$this->userData['nombre'].'!</h1>
-            
-            <p>Estamos encantados de tenerte con nosotros.</p>
-            
-            <div class="highlight">
-                <p><strong>Tu nombre de usuario:</strong> '.$this->userData['email'].'</p>
-            </div>
-            
-            <p>Para comenzar a utilizar nuestra plataforma, por favor verifica tu cuenta:</p>
-            div style="text-align: center; margin: 25px 0;">
-                <a href="'.$this->userData['verification_link'].'" class="btn-verify">Verificar mi cuenta</a>
-            </div>
-            
-            <p class="verification-text">Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
-            '.$this->userData['verification_link'].'</p>
-                        
-            <div class="footer">
-                <p>© '.date('Y').' We Agree. Todos los derechos reservados.</p>
-                <p>Si no solicitaste este registro, por favor ignora este mensaje.</p>
-            </div>
-        </body>
-        </html>';
-    } */
-
     protected function getWelcomeTemplate(): string
     {
+        $currentYear = date('Y');
         $frontendUrl = config('app.frontend_url').'verify-email?'.http_build_query([
             'id' => $this->userData['id'],
             'hash' => sha1($this->userData['email']),
@@ -191,7 +95,7 @@ public function envelope(): Envelope
                 <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_Williams_F1.png" alt="WeAgree Logo" class="logo">
             </div>
             
-            <h1>¡Bienvenido, {$this->userData['nombre']}!</h1>
+            <h1>¡Bienvenido, {$this->userData['name']}!</h1>
             
             <p>Gracias por registrarte en WeAgree. Por favor verifica tu dirección de email:</p>
             
@@ -203,7 +107,7 @@ public function envelope(): Envelope
             <small>{$frontendUrl}</small></p>
             
             <div class="footer">
-                <p>© {date('Y')} WeAgree. Todos los derechos reservados.</p>
+                <p>© {$currentYear} WeAgree. Todos los derechos reservados.</p>
                 <p>Si no solicitaste este registro, por favor ignora este mensaje.</p>
             </div>
         </body>
@@ -233,27 +137,60 @@ public function envelope(): Envelope
 
     protected function getResetPasswordTemplate(): string
     {
-        return '
+        $currentYear = date('Y');
+        return <<<HTML
         <!DOCTYPE html>
         <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { text-align: center; margin-bottom: 20px; }
+                .logo { max-width: 150px; height: auto; }
+                .button { 
+                    display: inline-block; 
+                    padding: 12px 24px; 
+                    background-color: #3490dc; 
+                    color: white !important; 
+                    text-decoration: none; 
+                    border-radius: 4px; 
+                    margin: 15px 0;
+                }
+                .footer { 
+                    margin-top: 30px; 
+                    padding-top: 20px; 
+                    border-top: 1px solid #eee; 
+                    font-size: 12px; 
+                    color: #777; 
+                }
+            </style>
+        </head>
         <body>
+            <div class="header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_Williams_F1.png" alt="WeAgree Logo" class="logo">
+            </div>
+            
             <h1>Restablecimiento de contraseña</h1>
-            <p>Haga clic en el siguiente enlace para restablecer su contraseña:</p>
-            <a href="'.$this->userData['reset_link'].'">Restablecer contraseña</a>
+            
+            <p>Hola, {$this->userData['name']}!</p>
+            
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. Haz clic en el siguiente botón para continuar:</p>
+            
+            <div style="text-align: center;">
+                <a href="{$this->userData['reset_link']}" class="button">Restablecer contraseña</a>
+            </div>
+            
+            <p>Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
+            <small>{$this->userData['reset_link']}</small></p>
+            
+            <p><em>Este enlace expirará en 60 minutos por motivos de seguridad.</em></p>
+            
+            <div class="footer">
+                <p>© {$currentYear} WeAgree. Todos los derechos reservados.</p>
+                <p>Si no solicitaste este restablecimiento, por favor ignora este mensaje.</p>
+            </div>
         </body>
-        </html>';
-    }
-
-    protected function getDefaultTemplate(): string
-    {
-        return '
-        <!DOCTYPE html>
-        <html>
-        <body>
-            <h1>Notificación</h1>
-            <p>'.$this->userData['mensaje'].'</p>
-        </body>
-        </html>';
+        </html>
+        HTML;
     }
 
     public function attachments(): array
