@@ -34,6 +34,7 @@ class AdOfferController extends Controller
                 'bid' => 'required|numeric|min:0',
                 'description' => 'nullable|string|max:255',
                 'is_valid' => 'required|boolean',
+                'is_paid' => 'required|boolean',
                 'ad_id' => 'required|integer|exists:ads,id',
                 'user_id' => 'required|integer|exists:users,id',
             ]);
@@ -75,6 +76,7 @@ class AdOfferController extends Controller
                 'bid' => 'required|numeric|min:0',
                 'description' => 'nullable|string|max:255',
                 'is_valid' => 'required|boolean',
+                'is_paid' => 'required|boolean',
                 'ad_id' => 'required|integer|exists:ads,id',
                 'user_id' => 'required|integer|exists:users,id',
             ]);
