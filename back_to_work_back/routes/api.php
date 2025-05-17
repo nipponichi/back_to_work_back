@@ -23,6 +23,7 @@ Route::get('chats', [AdChatController::class, 'index']); // Listar todos los cha
 Route::post('chats', [AdChatController::class, 'store']); // Enviar un mensaje
 Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
 Route::get('offers/ad/{ad_id}', [AdOfferController::class, 'getOffersByAdId']); // Pujas de un anuncio
+Route::post('/offers/{id}/mark-paid', [AdOfferController::class, 'markAsPaid']);
 
 Route::post('/login', [PassportLoginController::class, 'login']);
 Route::post('/signup', [PassportLoginController::class, 'signup']);

@@ -134,4 +134,23 @@ public function getOffersByAdId($adId)
     }
 }
 
+public function markAsPaid($offerId)
+{
+    DB::beginTransaction();
+    try {
+        $offer = AdOffer::with('ad')->findOrFail($offerId);
+
+        // Marcar la puja como pagada y valida
+        $offer->is_paid = true;
+        $offer->is_valid = true;
+        $offer->save();
+
+        DB::commit();
+        return response()->json(['success' => true, 'message' => 'Payment marked as completed', 'data' => $offer], 200);
+    } catch (Exception $e) {
+        DB::rollBack();
+        return response()->json(['success' => false, 'message' => 'Error marking as paid: ' . $e->getMessage()], 500);
+    }
+}
+
 }
