@@ -24,9 +24,11 @@ Route::post('verify-email', [VerificationController::class, 'verify']);
 Route::apiResource('categories',AdCategoryController::class);
 Route::apiResource('offers', AdOfferController::class);
 Route::apiResource('ads', AdController::class);
+Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
 Route::apiResource('userstats', UserStatsController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('provinces', ProvinceController::class);
+
 
 
 Route::post('reset-password', [MailController::class, 'requestPasswordReset']);
@@ -39,15 +41,13 @@ Route::get('welcome-mail', [MailController::class, 'welcomeMessage']);
 Route::get('bid-notification-mail', [MailController::class, 'newBid']);
 
 
-Route::get('chats', [AdChatController::class, 'index']);
-Route::post('chats', [AdChatController::class, 'store']);
-Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']);
 Route::get('offers/ad/{ad_id}', [AdOfferController::class, 'getOffersByAdId']);
 //Route::post('/login', [PassportLoginController::class, 'login']);
 Route::post('/signup', [PassportLoginController::class, 'signup']);
 
 Route::middleware(['auth.validation2'])->group(function () {
     Route::post('/userData2', [PassportLoginController::class, 'userProfile']);
+
 });
 
 Route::middleware(['mail.verification'])->group(function () {
@@ -60,6 +60,6 @@ Route::middleware(['auth.validation'])->group(function(){
     });
 
     Route::post('/logout', [PassportLoginController::class, 'logout']);
-
+    Route::apiResource('chats', AdChatController::class);
 });  
  

@@ -139,7 +139,7 @@ class AdController extends Controller
     public function show($id)
     {
         try {
-            $ad = Ad::with('pictures')->findOrFail($id);
+            $ad = Ad::with('pictures', 'user')->findOrFail($id);
             return response()->json(['success' => true, 'message' => 'Ad loaded correctly', 'data' => $ad], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Ad not found'], 404);
@@ -203,13 +203,11 @@ class AdController extends Controller
         try {
             $ad = Ad::findOrFail($id);
 
-            // Eliminar archivos físicos antes de borrar los registros
             foreach ($ad->pictures as $picture) {
                 Storage::disk('public')->delete($picture->path);
                 $picture->delete();
             }
 
-            // Eliminar el anuncio
             $ad->delete();
 
             DB::commit();
@@ -217,6 +215,16 @@ class AdController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Error deleting ad: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function getAdsByUserId($userId)
+    {
+        try {
+            $ads = Ad::where('user_id', $userId)->with(['pictures:id,ad_id,path,type'])->get();
+            return response()->json(['success' => true, 'message' => 'Ads loaded correctly', 'data' => $ads], 200);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error loading ads: ' . $e->getMessage()], 500);
         }
     }
 
