@@ -27,6 +27,17 @@ Route::apiResource('ads', AdController::class);
 Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
 Route::apiResource('userstats', UserStatsController::class);
 Route::apiResource('users', UserController::class);
+
+Route::put('users/block/{id}', [UserController::class, 'blockUser']);
+Route::put('users/unblock/{id}', [UserController::class, 'unblockUser']);
+
+Route::get('chats', [AdChatController::class, 'index']); // Listar todos los chats
+Route::post('chats', [AdChatController::class, 'store']); // Enviar un mensaje
+Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']); // Mensajes de un anuncio
+Route::get('offers/ad/{ad_id}', [AdOfferController::class, 'getOffersByAdId']); // Pujas de un anuncio
+Route::post('/offers/{id}/mark-paid', [AdOfferController::class, 'markAsPaid']);
+
+Route::post('/login', [PassportLoginController::class, 'login']);
 Route::apiResource('provinces', ProvinceController::class);
 
 

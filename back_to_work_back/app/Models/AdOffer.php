@@ -15,6 +15,7 @@ class AdOffer extends Model
         'bid', 
         'description',
         'is_valid',
+        'is_paid',
         'ad_id',
         'user_id' 
     ];
