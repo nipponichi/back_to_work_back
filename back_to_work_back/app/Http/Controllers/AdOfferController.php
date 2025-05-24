@@ -142,7 +142,6 @@ public function markAsPaid($offerId)
 
         // Marcar la puja como pagada y valida
         $offer->is_paid = true;
-        $offer->is_valid = true;
         $offer->save();
 
         DB::commit();
