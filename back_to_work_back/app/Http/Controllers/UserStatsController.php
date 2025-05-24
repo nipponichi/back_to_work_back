@@ -9,6 +9,8 @@ use App\Models\UserStat;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserStatsController extends Controller
 {
@@ -29,29 +31,43 @@ class UserStatsController extends Controller
      * Crear un nuevo comentario
      */
     public function store(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            // Validar datos del anuncio
-            $validatedData = $request->validate([
-                'quality_price' => 'required|integer|max:32',
-                'customer_care' => 'required|integer|max:32',
-                'timing' => 'required|integer|max:32',
-                'review' => 'required|string|max:255',
-                'user_id' => 'required|integer|exists:users,id',
-                'ad_id' => 'required|integer|exists:ads,id',
-            ]);
+{
+    DB::beginTransaction();
+    try {
+        $validatedData = $request->validate([
+            'customer_care' => 'required|integer|max:10',
+            'review' => 'required|string|max:255',
+            'ad_id' => 'required|integer|exists:ads,id',
+            // Eliminamos user_id de la validación
+        ]);
 
-            // Crear el comentario
-            $userStat = UserStat::create($validatedData);
+        $user = $request->user(); 
 
-            DB::commit();
-            return response()->json(['success' => true, 'message' => 'Userstat saved', 'data'], 201);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error saving userstat: ' . $e->getMessage()], 500);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado.'
+            ], 401);
         }
+
+        $userStat = UserStat::create([
+            'user_id' => $user->id,
+            'ad_id' => $validatedData['ad_id'],
+            'customer_care' => $validatedData['customer_care'],
+            'review' => $validatedData['review'],
+        ]);
+
+        DB::commit();
+
+        return response()->json(['success' => true, 'message' => 'Valoración guardada con éxito']);
+    } catch (Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al guardar la valoración: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Mostrar un comentario especifico
@@ -76,9 +92,7 @@ class UserStatsController extends Controller
             $userstat = UserStat::findOrFail($id);
 
             $validatedData = $request->validate([
-                'quality_price' => 'required|integer|max:32',
                 'customer_care' => 'required|integer|max:32',
-                'timing' => 'required|integer|max:32',
                 'review' => 'required|string|max:255',
                 'user_id' => 'required|integer|exists:users,id',
                 'ad_id' => 'required|integer|exists:ads,id',

@@ -152,4 +152,12 @@ public function markAsPaid($offerId)
     }
 }
 
+public function getAdIdByBidId($bid)
+    {
+        $adOffer = AdOffer::find($bid);
+        if (!$adOffer) {
+            return response()->json(['error' => 'Offer not found'], 404);
+        }
+        return response()->json(['ad_id' => $adOffer->ad_id]);
+    }
 }

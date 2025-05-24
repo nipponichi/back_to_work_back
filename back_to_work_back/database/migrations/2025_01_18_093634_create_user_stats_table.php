@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_stats', function (Blueprint $table) {
             $table->id();
-            $table->integer('quality_price')->unsigned();
             $table->integer('customer_care')->unsigned();
-            $table->integer('timing')->unsigned();
             $table->string('review')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('ad_id')->constrained('ads')->onDelete('cascade');

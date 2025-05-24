@@ -11,9 +11,7 @@ class UserStat extends Model
 
     protected $table = 'user_stats';
     protected $fillable = [
-        'quality_price', 
         'customer_care',
-        'timing',
         'review',
         'user_id',
         'ad_id'

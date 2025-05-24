@@ -12,9 +12,17 @@ use App\Http\Controllers\UserController;
 
 Route::apiResource('categories',AdCategoryController::class);
 Route::apiResource('offers', AdOfferController::class);
+Route::get('/offers/{bid}/ad', [AdOfferController::class, 'getAdIdByBidId']);
 Route::apiResource('ads', AdController::class);
+<<<<<<< Updated upstream
 Route::apiResource('userstats', UserStatsController::class);
+=======
+Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
+//Route::apiResource('userstats', UserStatsController::class);
+>>>>>>> Stashed changes
 Route::apiResource('users', UserController::class);
+Route::middleware('auth:api')->apiResource('userstats', UserStatsController::class);
+
 
 Route::put('users/block/{id}', [UserController::class, 'blockUser']);
 Route::put('users/unblock/{id}', [UserController::class, 'unblockUser']);
