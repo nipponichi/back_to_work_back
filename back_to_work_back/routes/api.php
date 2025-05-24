@@ -21,12 +21,15 @@ Route::post('email/resend', 'Auth\VerificationController@resend')
 
 Route::post('verify-email', [VerificationController::class, 'verify']);
 
-Route::apiResource('categories',AdCategoryController::class);
+Route::apiResource('categories', AdCategoryController::class);
 Route::apiResource('offers', AdOfferController::class);
+Route::get('/offers/{bid}/ad', [AdOfferController::class, 'getAdIdByBidId']);
 Route::apiResource('ads', AdController::class);
 Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
 Route::apiResource('userstats', UserStatsController::class);
+Route::middleware('auth:api')->apiResource('userstats', UserStatsController::class);
 Route::apiResource('users', UserController::class);
+
 
 Route::put('users/block/{id}', [UserController::class, 'blockUser']);
 Route::put('users/unblock/{id}', [UserController::class, 'unblockUser']);
@@ -36,7 +39,6 @@ Route::post('chats', [AdChatController::class, 'store']);
 Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']);
 Route::get('offers/ad/{ad_id}', [AdOfferController::class, 'getOffersByAdId']);
 Route::post('/offers/{id}/mark-paid', [AdOfferController::class, 'markAsPaid']);
-
 Route::post('/login', [PassportLoginController::class, 'login']);
 Route::apiResource('provinces', ProvinceController::class);
 
@@ -65,9 +67,11 @@ Route::middleware(['mail.verification'])->group(function () {
     Route::post('/login', [PassportLoginController::class, 'login']);
 });
 
-Route::middleware(['auth.validation'])->group(function(){
-    
+
+Route::middleware(['auth.validation'])->group(function () {
+
     Route::middleware(['id.validation'])->group(function () {
+
     });
 
     Route::post('/logout', [PassportLoginController::class, 'logout']);
