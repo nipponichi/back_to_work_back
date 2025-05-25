@@ -20,7 +20,6 @@ Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
 
 // Rutas para userstats protegidas con auth:api middleware
 Route::middleware('auth:api')->apiResource('userstats', UserStatsController::class);
-
 Route::apiResource('users', UserController::class);
 
 // Bloquear y desbloquear usuario
@@ -52,5 +51,6 @@ Route::middleware(['auth.validation'])->group(function () {
         // Añade aquí rutas si las hay
     });
 
+    Route::get('/getStats', [UserStatsController::class, 'getStatsByUser']);
     Route::post('/logout', [PassportLoginController::class, 'logout']);
 });

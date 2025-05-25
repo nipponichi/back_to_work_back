@@ -140,4 +140,37 @@ class UserStatsController extends Controller
             return response()->json(['success' => false, 'message' => 'Error loading userstat: ' . $e->getMessage()], 500);
         }
     }
+
+    public function getStatsByUser()
+{
+    //Log::info('getStatsByUser llamado');
+
+    //$user = $request->user(); 
+    $user = Auth::guard('api')->user();
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No autenticado',
+        ], 401);
+    }
+
+    try {
+        $userStats = UserStat::where('user_id', $user->id)->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $userStats,
+        ]);
+    } catch (Exception $e) {
+        Log::error('Error al obtener valoraciones: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al obtener las valoraciones del usuario',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+    
 }
