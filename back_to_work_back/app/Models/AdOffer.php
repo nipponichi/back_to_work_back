@@ -28,4 +28,16 @@ class AdOffer extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function userStat()
+    {
+        return $this->hasManyThrough(
+            UserStat::class, // Modelo destino (UserStat)
+            User::class,     // Modelo intermedio (User)
+            'id',           // FK en User (user.id)
+            'user_id',      // FK en UserStat (userstats.user_id)
+            'user_id',      // FK en AdOffer (adoffers.user_id)
+            'id'            // PK en User (user.id)
+        );
+    }
 }

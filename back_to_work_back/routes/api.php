@@ -52,5 +52,9 @@ Route::middleware(['auth.validation'])->group(function () {
     });
 
     Route::get('/getStats', [UserStatsController::class, 'getStatsByUser']);
+
     Route::post('/logout', [PassportLoginController::class, 'logout']);
 });
+
+Route::get('/userstats/{userId}', [UserStatsController::class, 'countTotalRatingsByUser']);
+Route::get('/userstats/list/{userId}', [UserStatsController::class, 'listRatingsByUser']);

@@ -69,7 +69,7 @@ class User extends Authenticatable
 
     public function userStat()
     {
-        return $this->hasOne(UserStat::class, 'user_id', 'id');
+        return $this->hasMany(UserStat::class, 'user_id', 'id');
     }
     public function categories()
     {

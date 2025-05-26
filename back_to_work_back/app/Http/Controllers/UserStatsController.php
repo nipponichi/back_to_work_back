@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Workbench\App\Models\User;
 
 class UserStatsController extends Controller
 {
@@ -171,6 +172,28 @@ class UserStatsController extends Controller
             'error' => $e->getMessage(),
         ], 500);
     }
+}
+
+public function countTotalRatingsByUser($userId)
+{
+    $count = UserStat::where('user_id', $userId)->count();
+
+    return response()->json([
+        'success' => true,
+        'count' => $count
+    ]);
+}
+
+public function listRatingsByUser($userId)
+{
+    $ratings = UserStat::where('user_id', $userId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $ratings
+    ]);
 }
     
 }

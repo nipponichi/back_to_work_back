@@ -116,7 +116,7 @@ public function getOffersByAdId($adId)
 {
     try {
         $offers = AdOffer::where('ad_id', $adId)
-            ->with(['ad', 'user']) // Incluye relaciones completas
+            ->with(['ad', 'user','userstat']) 
             ->get();
 
         return response()->json([
