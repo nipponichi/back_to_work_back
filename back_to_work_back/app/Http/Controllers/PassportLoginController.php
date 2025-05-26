@@ -59,7 +59,8 @@ class PassportLoginController extends Controller
         ];
 
         if (Auth::attempt($data)) {
-            $user = Auth::user();
+            $user = User::with(['userStat'])->first();
+            //$user = Auth::user();
 
             if (!$user) {
                 return response()->json(['success' => false, 'message' => 'User not found'], 404);

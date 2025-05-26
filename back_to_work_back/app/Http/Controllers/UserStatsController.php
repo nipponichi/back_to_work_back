@@ -76,7 +76,8 @@ class UserStatsController extends Controller
     public function show($id)
     {
         try {
-            $userstat = UserStat::with(['ad', 'user'])->findOrFail($id);
+            $userstat = UserStat::where('user_id', $id)->get();
+            //$userstat = UserStat::with(['ad', 'user'])->findOrFail($id);
             return response()->json(['success' => true, 'message' => 'Userstat loaded correctly', 'data' => $userstat], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Userstat not found'], 404);

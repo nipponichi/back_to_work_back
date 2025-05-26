@@ -19,7 +19,7 @@ Route::apiResource('ads', AdController::class);
 Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
 
 // Rutas para userstats protegidas con auth:api middleware
-Route::middleware('auth:api')->apiResource('userstats', UserStatsController::class);
+Route::apiResource('userstats', UserStatsController::class);
 Route::apiResource('users', UserController::class);
 
 // Bloquear y desbloquear usuario
