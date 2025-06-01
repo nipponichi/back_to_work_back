@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Mail;
+use App\Mail\SendMail;
+use URL;
 
 class UserStatsController extends Controller
 {
@@ -31,43 +34,43 @@ class UserStatsController extends Controller
      * Crear un nuevo comentario
      */
     public function store(Request $request)
-{
-    DB::beginTransaction();
-    try {
-        $validatedData = $request->validate([
-            'customer_care' => 'required|integer|max:10',
-            'review' => 'required|string|max:255',
-            'ad_id' => 'required|integer|exists:ads,id',
-            // Eliminamos user_id de la validación
-        ]);
+    {
+        DB::beginTransaction();
+        try {
+            $validatedData = $request->validate([
+                'customer_care' => 'required|integer|max:10',
+                'review' => 'required|string|max:255',
+                'ad_id' => 'required|integer|exists:ads,id',
+            ]);
 
-        $user = $request->user(); 
+            $user = $request->user(); 
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuario no autenticado.'
+                ], 401);
+            }
+
+            $userStat = UserStat::create([
+                'user_id' => $user->id,
+                'ad_id' => $validatedData['ad_id'],
+                'customer_care' => $validatedData['customer_care'],
+                'review' => $validatedData['review'],
+            ]);
+
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Valoración guardada con éxito']);
+        } catch (Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Usuario no autenticado.'
-            ], 401);
+                'message' => 'Error al guardar la valoración: ' . $e->getMessage()
+            ], 500);
         }
-
-        $userStat = UserStat::create([
-            'user_id' => $user->id,
-            'ad_id' => $validatedData['ad_id'],
-            'customer_care' => $validatedData['customer_care'],
-            'review' => $validatedData['review'],
-        ]);
-
-        DB::commit();
-
-        return response()->json(['success' => true, 'message' => 'Valoración guardada con éxito']);
-    } catch (Exception $e) {
-        DB::rollBack();
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al guardar la valoración: ' . $e->getMessage()
-        ], 500);
     }
-}
 
     /**
      * Mostrar un comentario especifico

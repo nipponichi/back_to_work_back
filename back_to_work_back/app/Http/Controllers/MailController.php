@@ -45,17 +45,14 @@ class MailController extends Controller
         try {
             $user = User::where('email', $request->email)->firstOrFail();
 
-            // Generar token único
             $token = Str::random(60);
 
-            // Guardar token hasheado
             DB::table('password_reset_tokens')->updateOrInsert(
                 ['email' => $user->email],
                 ['token' => bcrypt($token), 
                 'created_at' => now()]
             );
             
-            // Enlace al FRONTEND con el token sin hashear y email
             $frontendUrl = config('app.frontend_url')."reset-password?token=$token&email=".urlencode($user->email);
 
             Mail::to($user->email)->send(new SendMail(

@@ -163,21 +163,21 @@ class UserController extends Controller
     }
 
     public function blockUser($id)
-{
-    $user = User::findOrFail($id);
-    $user->is_blocked = true; 
-    $user->save();
+    {
+        $user = User::findOrFail($id);
+        $user->is_blocked = true; 
+        $user->save();
 
-    return response()->json(['success' => true]);
-}
+        return response()->json(['success' => true]);
+    }   
 
-public function unblockUser($id)
-{
-    $user = User::findOrFail($id);
-    $user->is_blocked = false; 
-    $user->save();
+    public function unblockUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->is_blocked = false; 
+        $user->save();
 
-    return response()->json(['success' => true]);
-}
+        return response()->json(['success' => true]);
+    }
 
 }

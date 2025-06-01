@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\AdOffer;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Mail;
+use App\Mail\SendMail;
+use App\Models\User;
+use App\Models\Ad;
 
 class AdOfferController extends Controller
 {
@@ -140,15 +144,45 @@ public function markAsPaid($offerId)
     try {
         $offer = AdOffer::with('ad')->findOrFail($offerId);
 
-        // Marcar la puja como pagada y valida
+        $user = User::findOrFail($offer->user_id);
+
+        $ad = Ad::findOrFail($offer->ad_id);
+
+        $payer = User::findOrFail($ad->user_id);
+ 
         $offer->is_paid = true;
         $offer->save();
 
+        $message = "
+            Has recibido un pago por tu oferta en el anuncio: <strong>{$ad->name}</strong>.<br><br>
+            
+            Detalles del pago:<br>
+            - Cantidad: <strong>{$offer->bid} €</strong><br>
+            - Pagado por: <strong>{$payer->user_name}</strong><br>
+            - Fecha: <strong>" . now()->format('d/m/Y H:i') . "</strong><br><br>
+            
+            ¡Ahora es tu turno de realizar el trabajo!.
+        ";
+
+        Mail::to($user->email)->send(new SendMail([
+            'nombre' => $user->user_name,
+            'email' => $user->email,
+            'mensaje' => $message,
+            'verification_link' => null
+        ], SendMail::TEMPLATE_NOTIFICATION));
+
         DB::commit();
-        return response()->json(['success' => true, 'message' => 'Payment marked as completed', 'data' => $offer], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment marked as completed',
+            'data' => $offer
+        ], 200);
     } catch (Exception $e) {
         DB::rollBack();
-        return response()->json(['success' => false, 'message' => 'Error marking as paid: ' . $e->getMessage()], 500);
+        return response()->json([
+            'success' => false,
+            'message' => 'Error marking as paid: ' . $e->getMessage()
+        ], 500);
     }
 }
 

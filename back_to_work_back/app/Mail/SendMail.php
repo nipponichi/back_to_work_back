@@ -117,22 +117,18 @@ public function envelope(): Envelope
 
     protected function getNotificationTemplate(): string
     {
-        return '
-                    <div style="text-align: center; margin: 25px 0;">
-                <a href="'.$this->userData['verification_link'].'" class="btn-verify">Verificar mi cuenta</a>
-            </div>
-            
-            <p class="verification-text">Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
-            '.$this->userData['verification_link'].'</p>
-
-
+        return <<<HTML
         <!DOCTYPE html>
         <html>
         <body>
-            <h1>Hola, '.$this->userData['nombre'].'</h1>
-            <p>'.$this->userData['mensaje'].'</p>
+            <div class="header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_Williams_F1.png" alt="WeAgree Logo" class="logo"/>
+            </div>
+            <h1>Hola, {$this->userData['nombre']}</h1>
+            <p>{$this->userData['mensaje']}</p>
         </body>
-        </html>';
+        </html>
+        HTML;
     }
 
     protected function getResetPasswordTemplate(): string
