@@ -153,7 +153,7 @@ public function index()
     public function show($id)
     {
         try {
-            $ad = Ad::with('pictures', 'user')->findOrFail($id);
+            $ad = Ad::with('pictures', 'user', 'adOffer')->findOrFail($id);
             return response()->json(['success' => true, 'message' => 'Ad loaded correctly', 'data' => $ad], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Ad not found'], 404);
@@ -235,7 +235,7 @@ public function index()
     public function getAdsByUserId($userId)
     {
         try {
-            $ads = Ad::where('user_id', $userId)->with(['pictures:id,ad_id,path,type'])->get();
+            $ads = Ad::where('user_id', $userId)->with(['pictures:id,ad_id,path,type', 'adOffer'])->get();
             return response()->json(['success' => true, 'message' => 'Ads loaded correctly', 'data' => $ads], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading ads: ' . $e->getMessage()], 500);

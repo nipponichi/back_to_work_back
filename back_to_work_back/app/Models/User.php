@@ -74,7 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function userStat()
     {
-        return $this->hasOne(UserStat::class, 'user_id', 'id');
+        return $this->hasMany(UserStat::class, 'user_id', 'id');
     }
     public function categories()
     {
