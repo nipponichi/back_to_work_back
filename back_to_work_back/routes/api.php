@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\ClaimController;
 
 
 /* Route::post('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')
@@ -20,7 +21,7 @@ Route::post('email/resend', 'Auth\VerificationController@resend')
 Route::post('verify-email', [VerificationController::class, 'verify']);
 Route::post('validate-reset-token', [VerificationController::class, 'validateResetToken']); */
 
-Route::apiResource('categories', AdCategoryController::class);
+
 
 Route::apiResource('offers', AdOfferController::class);
 Route::get('/offers/{bid}/ad', [AdOfferController::class, 'getAdIdByBidId']);
@@ -29,16 +30,11 @@ Route::post('/offers/{id}/mark-paid', [AdOfferController::class, 'markAsPaid']);
 
 Route::post('signup', [UserController::class, 'store']);
 
-Route::apiResource('ads', AdController::class);
-Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
-
 
 Route::apiResource('userstats', UserStatsController::class);
 Route::middleware('auth:api')->apiResource('userstats', UserStatsController::class);
 
 
-Route::put('users/block/{id}', [UserController::class, 'blockUser']);
-Route::put('users/unblock/{id}', [UserController::class, 'unblockUser']);
 Route::post('update-password', [UserController::class, 'updatePassword']);
 
 Route::get('chats', [AdChatController::class, 'index']);
@@ -54,10 +50,6 @@ Route::post('reset-password', [MailController::class, 'requestPasswordReset']);
 
 Route::post('/signup', [PassportLoginController::class, 'signup']);
 
-Route::middleware(['auth.validation2'])->group(function () {
-    
-
-});
 
 Route::middleware(['mail.verification'])->group(function () {
     Route::post('/login', [PassportLoginController::class, 'login']);
@@ -65,13 +57,22 @@ Route::middleware(['mail.verification'])->group(function () {
 
 
 Route::middleware(['auth.validation'])->group(function () {
+    Route::apiResource('categories', AdCategoryController::class);
     Route::apiResource('users', UserController::class);
+    Route::get('users/block/{id}', [UserController::class, 'blockUser']);
+    Route::post('users/updateImage/{id}', [UserController::class, 'updateImage']);
     Route::get('getAdsWhereIAm', [AdController::class, 'getAdsWhereIAm']);
     Route::post('/logout', [PassportLoginController::class, 'logout']);
     Route::apiResource('chats', AdChatController::class);
+    
+    Route::apiResource('ads', AdController::class);
+    Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
     Route::post('ad/done', [AdController::class, 'markAsDone']);
+    Route::post('ads/pictures/upload', [AdController::class, 'uploadPicture']);
+    Route::delete('ads/pictures/{id}', [AdController::class, 'deletePicture']);
+    Route::get('/ads/verify/{id}', [AdController::class, 'verifyAd']);
     Route::apiResource('userstats', UserStatsController::class);
-    Route::post('users/updateImage/{id}', [UserController::class, 'updateImage']);
+    Route::apiResource('claims', ClaimController::class);
 
 });  
  

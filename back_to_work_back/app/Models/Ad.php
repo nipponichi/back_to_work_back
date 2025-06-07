@@ -23,12 +23,18 @@ class Ad extends Model
 
     protected $casts = [
         'category_id' => 'integer',
+        'pro_is_done' => 'boolean',
+        'customer_is_done' => 'boolean',
     ];
+
+
 
     public function category()
     {
-        return $this->belongsTo(adCategory::class, 'category_id', 'id');
+        return $this->belongsTo(AdCategory::class, 'category_id', 'id');
     }
+
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

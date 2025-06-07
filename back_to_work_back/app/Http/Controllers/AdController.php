@@ -9,33 +9,35 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class AdController extends Controller
 {
+    public function getAuthUser()
+    {
+        return Auth::guard('api')->user();
+    }
+
     /**
      * Listar todos los anuncios con imágenes/videos.
      */
     public function index()
     {
         try {
+            $authUser = $this->getAuthUser();
+            if ($authUser->hasRole('admin')) {
+                $ads = Ad::with(['pictures:id,ad_id,path,type', 'adOffer', 'user.userStat', 'category'])->get();
+                return response()->json(['success' => true, 'message' => 'Anuncios cargados correctamente', 'data' => $ads], 200);
+            }
+
             $ads = Ad::with(['pictures:id,ad_id,path,type', 'adOffer', 'user.userStat'])
                 ->whereDoesntHave('adOffer', function($query) {
                     $query->where('is_paid', true);
-                })
-                ->get();
+                })->get();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Ads loaded correctly (excluding those with paid offers)',
-                'data' => $ads
-            ], 200);
+            return response()->json(['success' => true, 'message' => 'Anuncios cargados correctamente', 'data' => $ads], 200);
 
         } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error loading ads: ' . $e->getMessage()
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Error cargando anuncios: ' . $e->getMessage()], 500);
         }
     }
 
@@ -81,19 +83,12 @@ class AdController extends Controller
     
             DB::commit();
     
-            return response()->json([
-                'success' => true,
-                'message' => 'Ad and media saved successfully',
-                'data' => $ad->load('pictures')
-            ], 201);
+            return response()->json(['success' => true, 'message' => 'Anuncio guardado correctamente', 'data' => $ad->load('pictures')], 201);
     
         } catch (Exception $e) {
             DB::rollBack();
     
-            return response()->json([
-                'success' => false,
-                'message' => 'Error saving ad: ' . $e->getMessage()
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Error guardando anuncio: ' . $e->getMessage()], 500);
         }
     }
 
@@ -104,9 +99,9 @@ class AdController extends Controller
     {
         try {
             $ad = Ad::with('pictures', 'user', 'adOffer')->findOrFail($id);
-            return response()->json(['success' => true, 'message' => 'Ad loaded correctly', 'data' => $ad], 200);
+            return response()->json(['success' => true, 'message' => 'Anuncio cargado correctamente', 'data' => $ad], 200);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Ad not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Anuncio no encontrado', 'data' => ''], 404);
         }
     }
 
@@ -125,7 +120,8 @@ class AdController extends Controller
                 'category_id' => 'required|integer|exists:ads_categories,id',
                 'due_date' => 'nullable|date|after_or_equal:today',
                 'location' => 'required|string|max:64',
-                'is_done' => 'required|boolean',
+                'pro_is_done' => 'required|boolean',
+                'customer_is_done' => 'required|boolean',
                 'user_id' => 'required|integer|exists:users,id',
                 'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,video/mp4,video/quicktime'
             ]);
@@ -195,8 +191,8 @@ class AdController extends Controller
     public function getAdsWhereIAm()
     {
         try {
-            $user = Auth::guard('api')->user();    
-            $ads = Ad::getAdsInvolvedByUser($user->id);
+            $authUser = $this->getAuthUser();  
+            $ads = Ad::getAdsInvolvedByUser($authUser->id);
 
             return response()->json(['success' => true, 'message' => 'Ads where you are involved (no paid offers from others)', 'data' => $ads], 200);
 
@@ -205,87 +201,110 @@ class AdController extends Controller
         }
     }
 
-public function markAsDone(Request $request)
-{
-    try {
-        $user = Auth::guard('api')->user();
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Usuario no autenticado'
-            ], 401);
-        }
-        
-        $ad = Ad::findOrFail($request->id);
-
-        $hasPaidOffer = $ad->adOffer()->where('is_paid', true)->exists();
-        if (!$hasPaidOffer) {
-            return response()->json([   
-                'success' => false,
-                'message' => 'El anuncio no tiene ofertas pagadas'
-            ], 400);
-        }
-
-        if ($user->is_pro) {
-
-            $isOfferer = $ad->adOffer()
-                ->where('is_paid', true)
-                ->where('user_id', $user->id)
-                ->exists();
+    public function markAsDone(Request $request)
+    {
+        try {
+            $authUser = $this->getAuthUser();
+            if (!$authUser) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuario no autenticado'
+                ], 401);
+            }
             
-            if (!$isOfferer) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No eres el profesional asignado a este trabajo'
-                ], 403);
+            $ad = Ad::findOrFail($request->id);
+
+            $hasPaidOffer = $ad->adOffer()->where('is_paid', true)->exists();
+            if (!$hasPaidOffer) {
+                return response()->json(['success' => false, 'message' => 'El anuncio no tiene ofertas pagadas'], 400);
             }
 
-            $ad->pro_is_done = true;
-            $message = 'Has marcado este trabajo como completado. Esperando confirmación del cliente.';
-        } else {
+            if ($authUser->is_pro) {
 
-            if ($ad->user_id != $user->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No eres el dueño de este anuncio'
-                ], 403);
+                $isOfferer = $ad->adOffer()
+                    ->where('is_paid', true)
+                    ->where('user_id', $authUser->id)
+                    ->exists();
+                
+                if (!$isOfferer) {
+                    return response()->json(['success' => false, 'message' => 'No eres el profesional asignado a este trabajo'], 403);
+                }
+
+                $ad->pro_is_done = true;
+                $message = 'Has marcado este trabajo como completado. Esperando confirmación del cliente.';
+            } else {
+
+                if ($ad->user_id != $authUser->id) {
+                    return response()->json(['success' => false, 'message' => 'No eres el dueño de este anuncio'], 403);
+                }
+
+                if (!$ad->pro_is_done) {
+                    return response()->json(['success' => false, 'message' => 'El profesional aún no ha marcado el trabajo como completado'], 400);
+                }
+
+                $ad->customer_is_done = true;
+                $message = 'Has confirmado la finalización del trabajo.';
             }
 
-            if (!$ad->pro_is_done) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'El profesional aún no ha marcado el trabajo como completado'
-                ], 400);
-            }
+            $ad->save();
 
-            $ad->customer_is_done = true;
-            $message = 'Has confirmado la finalización del trabajo.';
+            return response()->json(['success' => true, 'message' => $message, 'data' => ['pro_is_done' => $ad->pro_is_done, 'customer_is_done' => $ad->customer_is_done], 200]);
+
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Anuncio no encontrado'], 404);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al actualizar el estado', 'error' => $e->getMessage()], 500);
         }
-
-        $ad->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-            'data' => [
-                'pro_is_done' => (bool)$ad->pro_is_done,
-                'customer_is_done' => (bool)$ad->customer_is_done,
-                'is_completed' => $ad->pro_is_done && $ad->customer_is_done
-            ]
+    }
+    public function uploadPicture(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|max:2048',
+            'ad_id' => 'required|exists:ads,id',
         ]);
 
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Anuncio no encontrado'
-        ], 404);
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al actualizar el estado',
-            'error' => $e->getMessage()
-        ], 500);
+        $path = $request->file('image')->store('ads', 'public');
+
+        $picture = AdPicture::create([
+            'ad_id' => $request->ad_id,
+            'path' => 'storage/' . $path,
+            'type' => 'image',
+        ]);
+
+        return response()->json(['success' => true, 'picture' => $picture]);
     }
-}
+
+    public function deletePicture($id)
+    {
+        $picture = AdPicture::findOrFail($id);
+        Storage::disk('public')->delete(str_replace('storage/', '', $picture->path));
+        $picture->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function verifyAd($id)
+    {
+        try {
+            $authUser = $this->getAuthUser();
+            if (!$authUser->hasRole('admin')) {
+                return response()->json(['success' => false, 'message' => 'No autorizado', 'data' => ''], 403);
+            }
+
+            $ad = Ad::findOrFail($id);
+            if($ad->is_verified) {
+                $ad->is_verified = false;
+                $ad->save();
+                return response()->json(['success' => true, 'message' => 'Anuncio bloqueado correctamente', 'data' => $ad], 200);
+            } else {
+                $ad->is_verified = true;
+                $ad->save();
+                return response()->json(['success' => true, 'message' => 'Anuncio verificado correctamente', 'data' => $ad], 200);
+            }
+
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al verificar el anuncio'], 500);
+        }
+    }
 
 }

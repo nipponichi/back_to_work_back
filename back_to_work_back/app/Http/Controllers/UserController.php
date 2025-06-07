@@ -45,7 +45,7 @@ class UserController extends Controller
             $authUser = $this->getAuthUser();
 
             if ($authUser->hasRole('admin')) {
-                $user = User::with(['categories', 'provinces', 'userStat'])->findOrFail($id);
+                $user = User::with(['categories', 'provinces', 'userStat', 'roles'])->findOrFail($id);
                 return response()->json(['success' => true, 'message' => 'Usuarios cargados', 'data' => $user], 200);
             }
 
@@ -110,13 +110,17 @@ class UserController extends Controller
 
             $user->assignRole($roleToAssign);
             
-
-            Mail::to($user->email)->send(new SendMail([
-                'id'        => $user->id,
-                'name'      => $user->name,
-                'email'     => $user->email,
-                'signature' => explode('=', parse_url($signedUrl, PHP_URL_QUERY))[1]
-            ], SendMail::TEMPLATE_WELCOME));
+            if (!$authUser && !$authUser->hasRole('admin')) {
+                Mail::to($user->email)->send(new SendMail([
+                    'id'        => $user->id,
+                    'name'      => $user->name,
+                    'email'     => $user->email,
+                    'signature' => explode('=', parse_url($signedUrl, PHP_URL_QUERY))[1]
+                ], SendMail::TEMPLATE_WELCOME));
+            } else {
+                $user->email_verified_at = now();
+                $user->save();
+            }
 
             return response()->json(['success' => true, 'message' => 'Usuario creado correctamente', 'data' => $user], 201);
 
@@ -232,29 +236,26 @@ class UserController extends Controller
 
     public function blockUser($id)
     {
+        try {
         $authUser = $this->getAuthUser();
         if (!$authUser->hasRole('admin')) {
             return response()->json(['success' => false, 'message' => 'No tienes permisos para bloquear usuarios', 'data' => ''], 403);
         }
         $user = User::findOrFail($id);
-        $user->is_blocked = true; 
-        $user->save();
-
-        return response()->json(['success' => true]);
-    }   
-
-    public function unblockUser($id)
-    {
-        $authUser = $this->getAuthUser();
-        if (!$authUser->hasRole('admin')) {
-            return response()->json(['success' => false, 'message' => 'No tienes permisos para desbloquear usuarios', 'data' => ''], 403);
+        if ($user->is_blocked) {
+            $user->is_blocked = false;
+            $user->save();        
+            return response()->json(['success' => true, 'message' => 'Usuario desbloqueado', 'data' => ''], 200);
+        } else {
+            $user->is_blocked = true; 
+            $user->save();        
+            return response()->json(['success' => true, 'message' => 'Usuario Bloqueado', 'data' => ''], 200);
         }
-        $user = User::findOrFail($id);
-        $user->is_blocked = false; 
-        $user->save();
 
-        return response()->json(['success' => true]);
-    }
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al actualizar: ' .$e->getMessage()], 500);
+        }
+    }   
 
     public function updateImage(Request $request, $id)
     {
@@ -278,7 +279,6 @@ class UserController extends Controller
         }
     }
 
-
     private function handleImageUpload(Request $request, User $user)
     {
         if ($request->hasFile('image')) {
@@ -295,5 +295,6 @@ class UserController extends Controller
 
         return null;
     }
+    
 
 }
