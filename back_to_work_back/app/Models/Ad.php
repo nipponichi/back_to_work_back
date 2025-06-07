@@ -52,7 +52,7 @@ class Ad extends Model
     public static function getAdsInvolvedByUser(int $userId)
     {
         return self::query()
-            ->with(['pictures:id,ad_id,path,type', 'adOffer', 'adChat'])
+            ->with(['pictures:id,ad_id,path,type', 'adOffer', 'adChat', 'user.userStat'])
             ->where(function ($query) use ($userId) {
                 $query->whereHas('adChat', function ($q) use ($userId) {
                     $q->where('user_id', $userId);

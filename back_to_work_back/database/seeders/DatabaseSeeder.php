@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
             //UserSeeder::class,
             //AdCategorySeeder::class,
             //AdSeeder::class
-            ProvincesSeeder::class,
+            //ProvincesSeeder::class,
+            RoleSeeder::class,
         ]);
     }
 }

@@ -3,17 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Ad;
-use App\Models\AdPicture;
 use App\Models\UserStat;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Mail;
-use App\Mail\SendMail;
-use URL;
+
 
 class UserStatsController extends Controller
 {
@@ -37,25 +31,26 @@ class UserStatsController extends Controller
     {
         DB::beginTransaction();
         try {
-            $validatedData = $request->validate([
-                'customer_care' => 'required|integer|max:10',
-                'review' => 'required|string|max:255',
-                'ad_id' => 'required|integer|exists:ads,id',
-            ]);
-
-            $user = $request->user(); 
-
+            $user = Auth::guard('api')->user();
             if (!$user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Usuario no autenticado.'
                 ], 401);
             }
+            $validatedData = $request->validate([
+                'rating' => 'required|integer|max:10',
+                'review' => 'required|string|max:255',
+                'ad_id' => 'required|integer|exists:ads,id',
+                'receiver_id' => 'required|integer|exists:users,id',
+                'sender_id' => 'required|integer|exists:users,id',
+            ]);
 
             $userStat = UserStat::create([
-                'user_id' => $user->id,
+                'sender_id' => $user->id,
+                'receiver_id' => $validatedData['receiver_id'],
                 'ad_id' => $validatedData['ad_id'],
-                'customer_care' => $validatedData['customer_care'],
+                'rating' => $validatedData['rating'],
                 'review' => $validatedData['review'],
             ]);
 
@@ -95,9 +90,10 @@ class UserStatsController extends Controller
             $userstat = UserStat::findOrFail($id);
 
             $validatedData = $request->validate([
-                'customer_care' => 'required|integer|max:32',
+                'rating' => 'required|integer|max:32',
                 'review' => 'required|string|max:255',
-                'user_id' => 'required|integer|exists:users,id',
+                'sender_id' => 'required|integer|exists:users,id',
+                'receiver_id' => 'required|integer|exists:users,id',
                 'ad_id' => 'required|integer|exists:ads,id',
             ]);
 

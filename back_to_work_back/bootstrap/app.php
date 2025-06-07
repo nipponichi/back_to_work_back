@@ -16,7 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'mail.verification' => \App\Http\Middleware\VerifiedMail::class,
-            'id.validation' => IdValidation::class,
             'auth.validation' => \App\Http\Middleware\Authenticate::class,
         ]);
     })

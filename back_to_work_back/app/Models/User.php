@@ -39,6 +39,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    protected $guard_name = 'api';
+
     /**
      * Get the attributes that should be cast.
      *
@@ -49,6 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_pro' => 'boolean',
         ];
     }
 
@@ -74,7 +77,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function userStat()
     {
-        return $this->hasMany(UserStat::class, 'user_id', 'id');
+        return $this->hasMany(UserStat::class, 'receiver_id', 'id')
+                    ->whereColumn('sender_id', '!=', 'receiver_id');
     }
     public function categories()
     {
