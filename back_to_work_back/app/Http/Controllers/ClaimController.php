@@ -23,10 +23,9 @@ class ClaimController extends Controller
 
         if ($authUser->hasRole('admin')) {
             $claims = Claim::with(['sender', 'receiver', 'ad', 'bid', 'userStat'])->get();
-            return response()->json(['success' => true, 'message' => 'Reclamaciones cargadas correctamente', 'data' => $claims], 200);
         } else {
             $claims = Claim::with(['sender', 'receiver', 'ad', 'bid', 'userStat'])
-            ->where('sender_id', $authUser)
+            ->where('sender_id', $authUser->id)
             ->get();
         }
         
@@ -45,29 +44,33 @@ class ClaimController extends Controller
             'ad_id' => 'nullable|exists:ads,id',
             'bid_id' => 'nullable|exists:ads_offers,id',
             'user_stats_id' => 'nullable|exists:user_stats,id',
-            'images' => 'nullable|array',
-            'images.*' => 'string',
+            'images.*' => 'file|image|mimes:jpeg,png,jpg|max:2048',
             'reason' => 'required|string',
-            'status' => ['required', Rule::in(['pending', 'in_review', 'resolved', 'rejected', 'escalated', 'waiting_user'])],
             'admin_notes' => 'nullable|string'
         ]);
 
+        $paths = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('claims', 'public');
+                $paths[] = 'storage/' . $path;
+            }
+        }
+
+        $validated['images'] = $paths;
+        $validated['status'] = 'pending';
+
         $claim = Claim::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'data' => $claim
-        ], 201);
+        return response()->json(['success' => true, 'message' => 'Reclamación guardada con éxito', 'data' => $claim], 201);
     }
+
 
     public function show($id)
     {
         $claim = Claim::with(['sender', 'receiver', 'ad', 'bid', 'userStat'])->findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => $claim
-        ]);
+        return response()->json(['success' => true, 'message' => 'Reclamación cargada correctamente', 'data' => $claim]);
     }
 
     public function update(Request $request, $id)

@@ -24,23 +24,32 @@ class AdController extends Controller
     {
         try {
             $authUser = $this->getAuthUser();
+
             if ($authUser->hasRole('admin')) {
                 $ads = Ad::with(['pictures:id,ad_id,path,type', 'adOffer', 'user.userStat', 'category'])->get();
+
                 return response()->json(['success' => true, 'message' => 'Anuncios cargados correctamente', 'data' => $ads], 200);
             }
 
             $ads = Ad::with(['pictures:id,ad_id,path,type', 'adOffer', 'user.userStat'])
-                ->whereDoesntHave('adOffer', function($query) {
+                ->where(function ($query) use ($authUser) {
+                    $query->where('is_verified', true)
+                        ->orWhere(function ($subQuery) use ($authUser) {
+                            $subQuery->where('user_id', $authUser->id)
+                                    ->where('is_verified', false);
+                        });
+                })
+                ->whereDoesntHave('adOffer', function ($query) {
                     $query->where('is_paid', true);
-                })->get();
+                })
+                ->get();
 
             return response()->json(['success' => true, 'message' => 'Anuncios cargados correctamente', 'data' => $ads], 200);
 
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error cargando anuncios: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false,'message' => 'Error cargando anuncios: ' . $e->getMessage()], 500);
         }
     }
-
 
     public function store(Request $request)
     {
@@ -58,7 +67,7 @@ class AdController extends Controller
                 'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,image/jpg,video/mp4',
             ]);
                 
-
+            $validatedData['is_verified'] = false;
             $ad = Ad::create($validatedData);
 
             if ($request->hasFile('media')) {
@@ -126,7 +135,7 @@ class AdController extends Controller
                 'media.*' => 'file|max:20480|mimetypes:image/jpeg,image/png,video/mp4,video/quicktime'
             ]);
 
-
+            $validatedData['is_verified'] = false;
             $ad->update($validatedData);
 
             if ($request->hasFile('media')) {
