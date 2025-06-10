@@ -18,7 +18,7 @@ class ClaimController extends Controller
     public function index()
     {
         $authUser = $this->getAuthUser();
- try {
+    try {
         $claims = '';
 
         if ($authUser->hasRole('admin')) {
@@ -30,9 +30,9 @@ class ClaimController extends Controller
         }
         
         return response()->json(['success' => true, 'message'=> 'Reclamaciones cargadas correctamente', 'data' => $claims]);
-        
-    } catch (Exception $e) {
-        return response()->json(['success' => true, 'message'=> 'Error cargando reclamaciones: ' . $e , 'data' => '']);
+            
+        } catch (Exception $e) {
+            return response()->json(['success' => true, 'message'=> 'Error cargando reclamaciones: ' . $e , 'data' => '']);
         }
     }
 

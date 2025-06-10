@@ -59,23 +59,16 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        try { 
+        try {
+
             $validatedData = $request->validate([
                 'user_name' => 'required|string|max:255',
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
                 'phone' => 'nullable|string|max:20',
                 'province_id' => 'required',
-                'is_pro' => 'boolean',
                 'password' => ['string','min:4',],
             ]);
-
-            $imagePath = null;
-
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('users', 'public');
-                $imagePath = 'storage/' . $path;
-            }
 
             $user = User::create([
                 'user_name'   => $validatedData['user_name'],
@@ -85,8 +78,10 @@ class UserController extends Controller
                 'phone'       => $validatedData['phone'] ?? null,
                 'province_id' => $validatedData['province_id'],
                 'is_pro'      => $validatedData['is_pro'] ?? false,
-                'image'       => $imagePath,
             ]);
+
+
+            $imagePath = $this->handleImageUpload($request, $user);
 
             if ($user->is_pro && !empty($validatedData['categories'])) {
                 $user->categories()->sync($validatedData['categories']);
@@ -102,15 +97,14 @@ class UserController extends Controller
 
             $authUser = $this->getAuthUser();
 
-            if ($authUser && $authUser->hasRole('admin')) {
+            $roleToAssign = 'user';
+            if ($authUser && $authUser->hasRole('admin') && $request->filled('rol')) {
                 $roleToAssign = $request->rol;
-            } else {
-                $roleToAssign = 'user';
             }
 
             $user->assignRole($roleToAssign);
             
-            if (!$authUser && !$authUser->hasRole('admin')) {
+            if (!$authUser || !$authUser->hasRole('admin')) {
                 Mail::to($user->email)->send(new SendMail([
                     'id'        => $user->id,
                     'name'      => $user->name,

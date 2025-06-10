@@ -14,12 +14,12 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\ClaimController;
 
 
-/* Route::post('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')
+Route::post('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')
     ->name('verification.verify');
 Route::post('email/resend', 'Auth\VerificationController@resend')
     ->middleware('auth:sanctum');
 Route::post('verify-email', [VerificationController::class, 'verify']);
-Route::post('validate-reset-token', [VerificationController::class, 'validateResetToken']); */
+Route::post('validate-reset-token', [VerificationController::class, 'validateResetToken']);
 
 
 
@@ -49,12 +49,13 @@ Route::get('bid-notification-mail', [MailController::class, 'newBid']);
 Route::post('reset-password', [MailController::class, 'requestPasswordReset']);
 
 Route::post('/signup', [PassportLoginController::class, 'signup']);
-
-
 Route::middleware(['mail.verification'])->group(function () {
     Route::post('/login', [PassportLoginController::class, 'login']);
 });
 
+Route::get('provinces', [ProvinceController::class, 'index']);
+Route::get('categories/public', [AdCategoryController::class, 'index']);
+Route::post('user/public', [UserController::class, 'store']);
 
 Route::middleware(['auth.validation'])->group(function () {
     Route::apiResource('categories', AdCategoryController::class);
