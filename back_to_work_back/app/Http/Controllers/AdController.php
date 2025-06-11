@@ -107,7 +107,7 @@ class AdController extends Controller
     public function show($id)
     {
         try {
-            $ad = Ad::with('pictures', 'user', 'adOffer')->findOrFail($id);
+            $ad = Ad::with(['pictures:id,ad_id,path,type', 'adOffer', 'user.userStat', 'category'])->findOrFail($id);
             return response()->json(['success' => true, 'message' => 'Anuncio cargado correctamente', 'data' => $ad], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Anuncio no encontrado', 'data' => ''], 404);
@@ -267,18 +267,11 @@ class AdController extends Controller
     }
     public function uploadPicture(Request $request)
     {
-        $request->validate([
-            'image' => 'required|image|max:2048',
-            'ad_id' => 'required|exists:ads,id',
-        ]);
+        $request->validate(['image' => 'required|image|max:2048', 'ad_id' => 'required|exists:ads,id']);
 
         $path = $request->file('image')->store('ads', 'public');
 
-        $picture = AdPicture::create([
-            'ad_id' => $request->ad_id,
-            'path' => 'storage/' . $path,
-            'type' => 'image',
-        ]);
+        $picture = AdPicture::create(['ad_id' => $request->ad_id, 'path' => 'storage/' . $path, 'type' => 'image']);
 
         return response()->json(['success' => true, 'picture' => $picture]);
     }

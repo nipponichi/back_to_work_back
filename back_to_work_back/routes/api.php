@@ -12,6 +12,7 @@ use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\StripePaymentController;
 
 
 Route::post('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')
@@ -74,6 +75,7 @@ Route::middleware(['auth.validation'])->group(function () {
     Route::get('/ads/verify/{id}', [AdController::class, 'verifyAd']);
     Route::apiResource('userstats', UserStatsController::class);
     Route::apiResource('claims', ClaimController::class);
+    Route::post('/checkout', [StripePaymentController::class, 'createCheckoutSession']);
 
 });  
  

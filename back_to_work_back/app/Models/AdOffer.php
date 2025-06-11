@@ -16,8 +16,11 @@ class AdOffer extends Model
         'description',
         'is_valid',
         'is_paid',
-        'ad_id',
-        'user_id' 
+    ];
+
+    protected $casts = [
+        'is_paid' => 'boolean',
+        'is_valid' => 'boolean',
     ];
 
     public function ad()

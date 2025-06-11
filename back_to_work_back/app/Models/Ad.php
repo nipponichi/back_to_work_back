@@ -25,6 +25,7 @@ class Ad extends Model
         'category_id' => 'integer',
         'pro_is_done' => 'boolean',
         'customer_is_done' => 'boolean',
+        'is_verified' => 'boolean'
     ];
 
 
