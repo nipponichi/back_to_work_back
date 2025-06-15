@@ -16,6 +16,8 @@ class AdOffer extends Model
         'description',
         'is_valid',
         'is_paid',
+        'ad_id',
+        'user_id'
     ];
 
     protected $casts = [

@@ -42,10 +42,7 @@ class AdOfferController extends Controller
                 'ad_id' => 'required|integer|exists:ads,id',
                 'user_id' => 'required|integer|exists:users,id',
             ]);
-
-            // Crear la oferta
             $offer = AdOffer::create($validatedData);
-
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Offer created successfully', 'data' => $offer], 201);
         } catch (Exception $e) {

@@ -49,7 +49,7 @@ class UserStatsController extends Controller
             ]);
 
             DB::commit();
-
+            
             return response()->json(['success' => true, 'message' => 'Valoración guardada con éxito', 'data' => $userstat], 200);
         } catch (Exception $e) {
             DB::rollBack();

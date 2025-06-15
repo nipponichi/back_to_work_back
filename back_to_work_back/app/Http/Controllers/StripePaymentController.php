@@ -13,8 +13,9 @@ class StripePaymentController extends Controller
         $request->validate([
             'amount' => 'required|numeric|min:1',
             'bid_id' => 'required|integer',
+            'user_name' => 'required|string',
         ]);
-
+        
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $session = Session::create([
@@ -23,8 +24,8 @@ class StripePaymentController extends Controller
                 'price_data' => [
                     'currency' => 'eur',
                     'product_data' => [
-                        'name' => 'Pago de oferta',
-                        'description' => 'Oferta ID: ' . $request->bid_id,
+                        'name' => 'Pago por servicio',
+                        'description' => 'A usuario: ' . $request->user_name,
                     ],
                     'unit_amount' => $request->amount,
                 ],
@@ -32,7 +33,7 @@ class StripePaymentController extends Controller
             ]],
             'mode' => 'payment',
             'success_url' => env('APP_URL') . '/payment-success?bid_id=' . $request->bid_id,
-            'cancel_url' => env('APP_URL') . '/payment-cancel',
+            'cancel_url' => env('APP_URL') . '/service',
             'metadata' => [
                 'bid_id' => $request->bid_id,
             ],

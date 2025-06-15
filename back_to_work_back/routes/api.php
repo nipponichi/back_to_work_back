@@ -22,60 +22,58 @@ Route::post('email/resend', 'Auth\VerificationController@resend')
 Route::post('verify-email', [VerificationController::class, 'verify']);
 Route::post('validate-reset-token', [VerificationController::class, 'validateResetToken']);
 
-
-
-Route::apiResource('offers', AdOfferController::class);
-Route::get('/offers/{bid}/ad', [AdOfferController::class, 'getAdIdByBidId']);
-Route::get('offers/ad/{ad_id}', [AdOfferController::class, 'getOffersByAdId']);
-Route::post('/offers/{id}/mark-paid', [AdOfferController::class, 'markAsPaid']);
-
 Route::post('signup', [UserController::class, 'store']);
-
-
-Route::apiResource('userstats', UserStatsController::class);
-Route::middleware('auth:api')->apiResource('userstats', UserStatsController::class);
-
-
 Route::post('update-password', [UserController::class, 'updatePassword']);
 
-Route::get('chats', [AdChatController::class, 'index']);
-Route::post('chats', [AdChatController::class, 'store']);
-Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']);
-
-Route::apiResource('provinces', ProvinceController::class);
-
-
-Route::get('welcome-mail', [MailController::class, 'welcomeMessage']);
-Route::get('bid-notification-mail', [MailController::class, 'newBid']);
 Route::post('reset-password', [MailController::class, 'requestPasswordReset']);
+Route::get('welcome-mail', [MailController::class, 'welcomeMessage']);
 
-Route::post('/signup', [PassportLoginController::class, 'signup']);
-Route::middleware(['mail.verification'])->group(function () {
-    Route::post('/login', [PassportLoginController::class, 'login']);
-});
-
+// For registering user
 Route::get('provinces', [ProvinceController::class, 'index']);
 Route::get('categories/public', [AdCategoryController::class, 'index']);
 Route::post('user/public', [UserController::class, 'store']);
 
+
+Route::middleware(['mail.verification'])->group(function () {
+    Route::post('/login', [PassportLoginController::class, 'login']);
+});
+
+
 Route::middleware(['auth.validation'])->group(function () {
-    Route::apiResource('categories', AdCategoryController::class);
-    Route::apiResource('users', UserController::class);
-    Route::get('users/block/{id}', [UserController::class, 'blockUser']);
-    Route::post('users/updateImage/{id}', [UserController::class, 'updateImage']);
-    Route::get('getAdsWhereIAm', [AdController::class, 'getAdsWhereIAm']);
-    Route::post('/logout', [PassportLoginController::class, 'logout']);
-    Route::apiResource('chats', AdChatController::class);
+
+    Route::get('offers/mark-paid/{id}', [AdOfferController::class, 'markAsPaid']);
+    Route::apiResource('offers', AdOfferController::class);
+    Route::get('/offers/{bid}/ad', [AdOfferController::class, 'getAdIdByBidId']);
+    Route::get('offers/ad/{ad_id}', [AdOfferController::class, 'getOffersByAdId']);
     
+    Route::apiResource('provinces', ProvinceController::class);
+
+    Route::apiResource('categories', AdCategoryController::class);
+
     Route::apiResource('ads', AdController::class);
     Route::get('getAdsByUser/{id}', [AdController::class, 'getAdsByUserId']);
     Route::post('ad/done', [AdController::class, 'markAsDone']);
     Route::post('ads/pictures/upload', [AdController::class, 'uploadPicture']);
     Route::delete('ads/pictures/{id}', [AdController::class, 'deletePicture']);
     Route::get('/ads/verify/{id}', [AdController::class, 'verifyAd']);
+
+    Route::apiResource('chats', AdChatController::class);
+    Route::get('chats/ad/{ad_id}', [AdChatController::class, 'getMessagesByAd']);
+    
+    Route::apiResource('users', UserController::class);
+    Route::get('users/block/{id}', [UserController::class, 'blockUser']);
+    Route::post('users/updateImage/{id}', [UserController::class, 'updateImage']);
+    Route::get('getAdsWhereIAm', [AdController::class, 'getAdsWhereIAm']);
+
+    Route::post('/logout', [PassportLoginController::class, 'logout']);
+    
     Route::apiResource('userstats', UserStatsController::class);
+ 
     Route::apiResource('claims', ClaimController::class);
+ 
     Route::post('/checkout', [StripePaymentController::class, 'createCheckoutSession']);
+
+    Route::get('bid-notification-mail', [MailController::class, 'newBid']);
 
 });  
  
