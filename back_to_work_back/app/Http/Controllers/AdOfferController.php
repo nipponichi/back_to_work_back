@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\AdOffer;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Throwable;
 use Mail;
 use App\Mail\SendMail;
 use App\Models\User;
@@ -19,7 +20,7 @@ class AdOfferController extends Controller
     public function index()
     {
         try {
-            $offers = AdOffer::with(['ad', 'user'])->get();
+            $offers = AdOffer::with(['ad', 'user.userStat'])->get();
             return response()->json(['success' => true, 'message' => 'Offers loaded correctly', 'data' => $offers], 200);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error loading offers: ' . $e->getMessage()], 500);
@@ -117,21 +118,14 @@ public function getOffersByAdId($adId)
 {
     try {
         $offers = AdOffer::where('ad_id', $adId)
-            ->with(['ad', 'user'])
+            ->with(['ad', 'user.userStat'])
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Offers loaded correctly',
-            'data' => $offers
-        ], 200);
-    } catch (\Throwable $e) {
+        return response()->json(['success' => true, 'message' => 'Offers loaded correctly','data' => $offers], 200);
+    } catch (Throwable $e) {
 
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Error loading offers: ' . $e->getMessage()
-        ], 500);
+        return response()->json(['success' => false,'message' => 'Error loading offers: ' . $e->getMessage()], 500);
     }
 }
 
@@ -169,17 +163,10 @@ public function markAsPaid($offerId)
         ], SendMail::TEMPLATE_NOTIFICATION));
 
         DB::commit();
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment marked as completed',
-            'data' => $offer
-        ], 200);
+        return response()->json(['success' => true,'message' => 'Payment marked as completed','data' => $offer], 200);
     } catch (Exception $e) {
         DB::rollBack();
-        return response()->json([
-            'success' => false,
-            'message' => 'Error marking as paid: ' . $e->getMessage()
-        ], 500);
+        return response()->json(['success' => false, 'message' => 'Error marking as paid: ' . $e->getMessage()], 500);
     }
 }
 
